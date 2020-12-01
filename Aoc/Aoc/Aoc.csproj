@@ -6,28 +6,28 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Update="Inputs\Aoc19\input1.txt">
+    <None Update="Inputs\2019.1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Inputs\Aoc19\input2.txt">
+    <None Update="Inputs\2019.2.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Inputs\Aoc19\input3.txt">
+    <None Update="Inputs\2019.3.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Inputs\Aoc19\input4.txt">
+    <None Update="Inputs\2019.4.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Inputs\Aoc19\input5.txt">
+    <None Update="Inputs\2019.5.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Inputs\Aoc19\input6.txt">
+    <None Update="Inputs\2019.6.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Inputs\Aoc19\input7.txt">
+    <None Update="Inputs\2019.7.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Inputs\Aoc20\input1.txt">
+    <None Update="Inputs\2020.1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -57,8 +57,15 @@
 
             var result2 = problem.Solve2(problemInput);
             Console.WriteLine($"Result 2: " + (result2 ?? "NULL"));
+
+            Console.WriteLine("Enter to exit.");
+            Console.ReadLine();
         }
 
+        /// <summary>
+        /// Scans for implemented problem solvers.
+        /// </summary>
+        /// <returns></returns>
         private static List<(int Year, int Number, Type Type)> GetProblemTypes()
         {
             var problems = new List<(int Year, int Number, Type Type)>();
@@ -74,13 +81,17 @@
                 var year = int.Parse(ns[2].Replace("Aoc", "")) + 2000;
                 var num = int.Parse(type.Name.Replace("Problem", ""));
 
-                Console.WriteLine($"> Found {year}.{num}");
+                //Console.WriteLine($"> Found {year}.{num}");
                 problems.Add((year, num, type));
             }
 
             return problems;
         }
 
+        /// <summary>
+        /// Reads requested problem year and number to solve.
+        /// </summary>
+        /// <returns></returns>
         private static (int Year, int Number) ReadProblemInput()
         {
             while (true)
@@ -88,14 +99,14 @@
                 var year = DateTime.Today.Year;
                 var problemNumber = DateTime.Today.Day;
 
-                Console.Write($"Problem number ({year} {problemNumber}): ");
+                Console.Write($"Problem number ({year}.{problemNumber}): ");
                 var input = Console.ReadLine();
                 if (string.IsNullOrWhiteSpace(input))
                 {
                     return (year, problemNumber);
                 }
 
-                var parts = input.Split(' ', ',', ':');
+                var parts = input.Split(' ', '.', ',', ':');
                 if (parts.Length == 1 && int.TryParse(parts[0], out problemNumber))
                 {
                     return (year, problemNumber);
