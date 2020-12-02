@@ -9,18 +9,47 @@
         public IntCodeComputer(IEnumerable<long> program)
         {
             OriginalProgram = program.ToArray();
+
+            Input = new Queue<long>();
+            Output = new List<long>();
         }
 
         public IntCodeComputer(string program)
         {
-            this.OriginalProgram = program.Split(',').Select(long.Parse).ToArray();
+            OriginalProgram = program.Split(',').Select(long.Parse).ToArray();
+            Input = new Queue<long>();
+            Output = new List<long>();
         }
 
+        /// <summary>
+        /// Copy of the original program.
+        /// </summary>
         private long[] OriginalProgram { get; }
 
-        private long[] _executionMemory;
+        private long[] _executionMemory = null;
 
-        private ExecutionState State { get; set; }
+        /// <summary>
+        /// Returns the full output array of the program.
+        /// </summary>
+        /// <returns></returns>
+        public List<long> Output { get; private set; }
+
+        /// <summary>
+        /// Returns the last output of the program, or null if no output has been produced.
+        /// </summary>
+        /// <returns></returns>
+        public long? GetLastOutput() => Output.Count > 0 ? Output.Last() : null;
+
+        private Queue<long> Input { get; }
+
+        /// <summary>
+        /// Amounts of operations the computer has run.
+        /// </summary>
+        public int OperationCount { get; private set; } = 0;
+
+        public ExecutionState State { get; private set; }
+
+        private int _operationIndex = 0;
 
         /// <summary>
         /// Hard limit for program execution.
@@ -39,37 +68,38 @@
         }
 
         /// <summary>
-        /// Returns the full output array of the program.
+        /// Resets the computer.
         /// </summary>
-        /// <returns></returns>
-        public List<long> GetOutput() => State?.Output;
-
-        /// <summary>
-        /// Executes the computer. Returns all output produced by it.
-        /// </summary>
-        /// <param name="input">Input buffer for the program.</param>
-        /// <returns></returns>
-        public long? Execute(params long[] input)
+        public void Reset()
         {
             // Copy the program into "execution memory".
             _executionMemory = new long[OriginalProgram.Length];
             OriginalProgram.CopyTo(_executionMemory, 0);
+        }
 
-            var inputBuffer = new Queue<long>(input);
+        /// <summary>
+        /// Executes the computer until it halts or requires more input.
+        /// </summary>
+        /// <param name="input">Input buffer for the program.</param>
+        /// <returns></returns>
+        public ExecutionState Execute(params long[] input)
+        {
+            // Reset if the execution memory has not been set up yet.
+            if (_executionMemory == null)
+            {
+                Reset();
+            }
 
-            State = new ExecutionState();
             // Push input into the buffer.
-            foreach (var item in input) State.InputBuffer.Enqueue(item);
+            foreach (var item in input) Input.Enqueue(item);
 
-
-            long? operationOutput;
             for (var i = 0; i < MaxIterations; ++i)
             {
-                (State.ShouldHalt, State.OperationIndex, operationOutput) = DoOperation(ref _executionMemory, State.OperationIndex, inputBuffer);
-                if (operationOutput.HasValue) State.Output.Add(operationOutput.Value);
-                if (State.ShouldHalt)
+                State = DoOperation();
+                ++OperationCount;
+                if (State != ExecutionState.Running)
                 {
-                    return State.Output.Count > 0 ? State.Output.Last() : (long?)null;
+                    return State;
                 }
             }
             // Hard-limit reached.
@@ -82,12 +112,12 @@
         /// <param name="array">Array to operate in.</param>
         /// <param name="operationIndex">Index of the operation code.</param>
         /// <returns>True if program should halt; false otherwise.</returns>
-        public static (bool shouldHalt, int nextOperationIndex, long? output) DoOperation(ref long[] array, int operationIndex, Queue<long> inputBuffer)
+        public ExecutionState DoOperation()
         {
             long? output = null;
 
             // Read operation code at index.
-            var operation = array[operationIndex];
+            var operation = _executionMemory[_operationIndex];
             // Parse operation code and parameter modes.
             var opCode = operation % 100;
 
@@ -103,11 +133,11 @@
             {
                 if (immediate[paramIndex])
                 {
-                    return array[inputIndex + paramIndex + 1];
+                    return _executionMemory[inputIndex + paramIndex + 1];
                 }
                 else
                 {
-                    return array[array[inputIndex + paramIndex + 1]];
+                    return _executionMemory[_executionMemory[inputIndex + paramIndex + 1]];
                 }
             }
 
@@ -117,43 +147,45 @@
             if (opCode == 1) // 1 = Sum
             {
                 paramCount = 3;
-                var value1 = GetValue(ref array, operationIndex, 0);
-                var value2 = GetValue(ref array, operationIndex, 1);
-                var outPos = array[operationIndex + 3];
-                array[outPos] = value1 + value2;
+                var value1 = GetValue(ref _executionMemory, _operationIndex, 0);
+                var value2 = GetValue(ref _executionMemory, _operationIndex, 1);
+                var outPos = _executionMemory[_operationIndex + 3];
+                _executionMemory[outPos] = value1 + value2;
             }
             else if (opCode == 2) // 2 = Multiply
             {
                 paramCount = 3;
-                var value1 = GetValue(ref array, operationIndex, 0);
-                var value2 = GetValue(ref array, operationIndex, 1);
-                var outPos = array[operationIndex + 3];
-                array[outPos] = value1 * value2;
+                var value1 = GetValue(ref _executionMemory, _operationIndex, 0);
+                var value2 = GetValue(ref _executionMemory, _operationIndex, 1);
+                var outPos = _executionMemory[_operationIndex + 3];
+                _executionMemory[outPos] = value1 * value2;
             }
             else if (opCode == 3) // 3 = Input
             {
                 paramCount = 1;
 
-                var input = inputBuffer?.Dequeue();
-                if (!input.HasValue)
+                if (Input.TryDequeue(out var input))
                 {
-                    // Fall back to CLI input.
-                    Console.Write("No input available in buffer - please input a number: ");
-                    input = long.Parse(Console.ReadLine());
+                    var outPos = _executionMemory[_operationIndex + 1];
+                    _executionMemory[outPos] = input;
                 }
-                var outPos = array[operationIndex + 1];
-                array[outPos] = input.Value;
+                else
+                {
+                    // No input available - return and wait for input.
+                    // Return current operation index (rerun).
+                    return ExecutionState.WaitingForInput;
+                }
             }
             else if (opCode == 4) // 4 = Output
             {
                 paramCount = 1;
-                output = GetValue(ref array, operationIndex, 0);
+                output = GetValue(ref _executionMemory, _operationIndex, 0);
             }
             else if (opCode == 5) // 5 = Jump-If-True
             {
                 paramCount = 2;
-                var value1 = GetValue(ref array, operationIndex, 0);
-                var value2 = GetValue(ref array, operationIndex, 1);
+                var value1 = GetValue(ref _executionMemory, _operationIndex, 0);
+                var value2 = GetValue(ref _executionMemory, _operationIndex, 1);
                 if (value1 != 0)
                 {
                     nextOperationIndex = (int)value2;
@@ -162,8 +194,8 @@
             else if (opCode == 6) // 6 = Jump-If-False
             {
                 paramCount = 2;
-                var value1 = GetValue(ref array, operationIndex, 0);
-                var value2 = GetValue(ref array, operationIndex, 1);
+                var value1 = GetValue(ref _executionMemory, _operationIndex, 0);
+                var value2 = GetValue(ref _executionMemory, _operationIndex, 1);
                 if (value1 == 0)
                 {
                     nextOperationIndex = (int)value2;
@@ -172,46 +204,40 @@
             else if (opCode == 7) // 7 = Less Than
             {
                 paramCount = 3;
-                var value1 = GetValue(ref array, operationIndex, 0);
-                var value2 = GetValue(ref array, operationIndex, 1);
-                var outPos = array[operationIndex + 3];
-                array[outPos] = value1 < value2 ? 1 : 0;
+                var value1 = GetValue(ref _executionMemory, _operationIndex, 0);
+                var value2 = GetValue(ref _executionMemory, _operationIndex, 1);
+                var outPos = _executionMemory[_operationIndex + 3];
+                _executionMemory[outPos] = value1 < value2 ? 1 : 0;
             }
             else if (opCode == 8) // 8 = Equals
             {
                 paramCount = 3;
-                var value1 = GetValue(ref array, operationIndex, 0);
-                var value2 = GetValue(ref array, operationIndex, 1);
-                var outPos = array[operationIndex + 3];
-                array[outPos] = value1 == value2 ? 1 : 0;
+                var value1 = GetValue(ref _executionMemory, _operationIndex, 0);
+                var value2 = GetValue(ref _executionMemory, _operationIndex, 1);
+                var outPos = _executionMemory[_operationIndex + 3];
+                _executionMemory[outPos] = value1 == value2 ? 1 : 0;
             }
             else if (opCode == 99)
             {
                 // opCode 99 = halt application.
-                return (true, operationIndex, output);
+                return ExecutionState.Halted;
             }
 
-            // Don't halt.
-            return (false, nextOperationIndex ?? operationIndex + paramCount + 1, output);
+            // Don't halt. Add output if defined, increment the operation index.
+            if (output.HasValue)
+            {
+                Output.Add(output.Value);
+            }
+            _operationIndex = nextOperationIndex ?? _operationIndex + paramCount + 1;
+
+            return ExecutionState.Running;
         }
 
-        public class ExecutionState
+        public enum ExecutionState
         {
-            public ExecutionState()
-            {
-                OperationIndex = 0;
-                ShouldHalt = false;
-                Output = new List<long>();
-                InputBuffer = new Queue<long>();
-            }
-
-            public int OperationIndex { get; set; }
-
-            public bool ShouldHalt { get; set; }
-
-            public List<long> Output { get; }
-
-            public Queue<long> InputBuffer { get; }
+            Running = 0,
+            Halted = 1,
+            WaitingForInput = 2
         }
     }
 }

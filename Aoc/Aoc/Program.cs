@@ -8,6 +8,8 @@
 
     internal class Program
     {
+        private const string CacheFileName = "./input-cache.txt";
+
         private static void Main(string[] args)
         {
             var problemTypes = GetProblemTypes();
@@ -34,6 +36,9 @@
                     Console.WriteLine(ex.Message);
                     problem = null;
                 }
+
+                // Solver found & constructed - cache the input.
+                SaveInputSuggestion(year, problemNumber);
 
                 Console.WriteLine("Getting input.");
                 try
@@ -72,9 +77,6 @@
             {
                 Console.WriteLine("Part 2 is not implemented.");
             }
-
-            Console.WriteLine("Enter to exit.");
-            Console.ReadLine();
         }
 
         /// <summary>
@@ -111,8 +113,7 @@
         {
             while (true)
             {
-                var year = DateTime.Today.Year;
-                var problemNumber = DateTime.Today.Day;
+                var (year, problemNumber) = GetInputSuggestion();
 
                 Console.Write($"Problem number ({year}.{problemNumber}): ");
                 var input = Console.ReadLine();
@@ -132,6 +133,43 @@
                 }
                 Console.WriteLine("Invalid input.");
             }
+        }
+
+        private static (int Year, int Number) GetInputSuggestion()
+        {
+            // Check if we have a cache file.
+            int year = 0, problemNumber = 0;
+            if (File.Exists(CacheFileName))
+            {
+                try
+                {
+                    var parts = File.ReadAllText(CacheFileName).Split(';');
+
+                    year = int.Parse(parts[0]);
+                    problemNumber = int.Parse(parts[1]);
+
+                    var savedAt = new DateTime(long.Parse(parts[2]));
+
+                    if (DateTime.Now.AddMinutes(-5) < savedAt)
+                    {
+                        // Found cached (and non-expired) suggestion.
+                        return (year, problemNumber);
+                    }
+                }
+                catch { }// Don't care about the cache failing - just return today's problem.
+            }
+
+            return (DateTime.Today.Year, DateTime.Today.Day);
+        }
+
+        /// <summary>
+        /// Caches the input problem as a suggestion for next launch.
+        /// </summary>
+        /// <param name="year"></param>
+        /// <param name="number"></param>
+        private static void SaveInputSuggestion(int year, int number)
+        {
+            File.WriteAllText(CacheFileName, string.Join(";", year, number, DateTime.Now.Ticks));
         }
     }
 }

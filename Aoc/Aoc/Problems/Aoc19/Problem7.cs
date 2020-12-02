@@ -1,8 +1,10 @@
 ﻿namespace Aoc.Problems.Aoc19
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
 
     public class Problem7 : IProblem
     {
@@ -46,8 +48,20 @@
                                 }
                             }
 
-            var maxSignal = phases.Select(phase => GetThrusterSignal2(input, phase)).Max();
-            return maxSignal;
+            Console.WriteLine($"Locating max signal from a set of {phases.Count}..");
+
+            var signalBag = new ConcurrentBag<long>();
+            var parallelOptions = new ParallelOptions
+            {
+                MaxDegreeOfParallelism = 8
+            };
+
+            Parallel.ForEach(phases, parallelOptions, phase =>
+            {
+                signalBag.Add(GetThrusterSignal2(input, phase));
+            });
+
+            return signalBag.Max();
         }
 
         public static long GetThrusterSignal(string program, string phases) => GetThrusterSignal(program, phases.Split(',').Select(long.Parse).ToArray());
@@ -59,18 +73,58 @@
             for (var i = 0; i < phases.Length; ++i)
             {
                 var computer = new Utils.IntCodeComputer(program);
-                output = computer.Execute(phases[i], output) ?? throw new InvalidOperationException($"Phase {i} did not provide output.");
+
+                computer.Execute(phases[i], output);
+
+                output = computer.GetLastOutput() ?? throw new InvalidOperationException("Program produced no output!");
             }
 
             return output;
         }
 
-        public static long GetThrusterSignal2(string program, string phases) => GetThrusterSignal2(program, phases.Split(',').Select(long.Parse).ToArray());
-
-        public static long GetThrusterSignal2(string program, long[] phases)
+        public static long GetThrusterSignal2(string program, string phaseInput)
         {
-            // TODO
-            return -1;
+            long[] phases = phaseInput.Split(',').Select(long.Parse).ToArray();
+
+            // Set up computers for each phase.
+            var computers = new Utils.IntCodeComputer[phases.Length];
+            for (var i = 0; i < phases.Length; ++i)
+            {
+                computers[i] = new Utils.IntCodeComputer(program);
+                computers[i].Execute(phases[i]);
+            }
+
+            const long maxIterations = 1_000_000;
+
+            // Start with an input of 0.
+            long output = 0;
+            for (var i = 0; i < maxIterations; ++i)
+            {
+                // Run through each computer.
+                for (var c = 0; c < computers.Length; ++c)
+                {
+                    var computer = computers[c];
+
+                    var computerState = computer.Execute(output);
+
+                    if (computer.Output.Count > 0)
+                    {
+                        output = computer.Output.Last();
+                    }
+
+                    if (computerState == Utils.IntCodeComputer.ExecutionState.WaitingForInput)
+                    {
+                        continue;
+                    }
+                    if (computerState == Utils.IntCodeComputer.ExecutionState.Halted && i == phases.Length - 1)
+                    {
+                        // Last computer halted - break out.
+                        break;
+                    }
+                }
+            }
+
+            return output;
         }
     }
 }
