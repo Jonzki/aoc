@@ -49,14 +49,29 @@
 
             Console.WriteLine($"{problem.GetType().Name} -> Solving part 1..");
 
-            var result1 = problem.Solve1(problemInput);
-            Console.WriteLine($"Result 1: " + (result1 ?? "NULL"));
+            try
+            {
+                var result1 = problem.Solve1(problemInput);
+                Console.WriteLine($"Result 1: " + (result1 ?? "NULL"));
+            }
+            catch (NotImplementedException)
+            {
+                Console.WriteLine("Part 1 is not implemented.");
+            }
+
 
             Console.WriteLine(new string('-', 20));
             Console.WriteLine($"{problem.GetType().Name} -> Solving part 2..");
 
-            var result2 = problem.Solve2(problemInput);
-            Console.WriteLine($"Result 2: " + (result2 ?? "NULL"));
+            try
+            {
+                var result2 = problem.Solve2(problemInput);
+                Console.WriteLine($"Result 2: " + (result2 ?? "NULL"));
+            }
+            catch (NotImplementedException)
+            {
+                Console.WriteLine("Part 2 is not implemented.");
+            }
 
             Console.WriteLine("Enter to exit.");
             Console.ReadLine();
