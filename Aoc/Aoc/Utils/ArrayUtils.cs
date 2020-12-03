@@ -65,5 +65,21 @@ namespace Aoc.Utils
             return y * width + x;
         }
 
+        /// <summary>
+        /// Returns the "height" of the input two-dimensional array.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="array"></param>
+        /// <returns></returns>
+        public static int Height<T>(this T[,] array) => array.GetLength(0);
+
+        /// <summary>
+        /// Returns the "Width" of the input two-dimensional array.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="array"></param>
+        /// <returns></returns>
+        public static int Width<T>(this T[,] array) => array.GetLength(1);
+
     }
 }
