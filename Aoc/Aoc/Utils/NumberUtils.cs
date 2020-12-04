@@ -18,5 +18,13 @@
             while (i >= length) i = i - length;
             return i;
         }
+
+        public static bool Between(this int value, int from, int to) => from < value && value < to;
+
+        public static bool BetweenInclusive(this int value, int from, int to) => from <= value && value <= to;
+
+        public static bool Between(this long value, long from, long to) => from < value && value < to;
+
+        public static bool BetweenInclusive(this long value, long from, long to) => from <= value && value <= to;
     }
 }

@@ -17,8 +17,8 @@ namespace Aoc.Tests.Utils
             var input = new[] { 1, 2, 3, 4, 5, 6 };
             var output = ArrayUtils.To2D(input, 3, 2);
 
-            Assert.AreEqual(3, output.GetLength(0));
-            Assert.AreEqual(2, output.GetLength(1));
+            Assert.AreEqual(2, output.GetLength(0));
+            Assert.AreEqual(3, output.GetLength(1));
 
             Assert.AreEqual(1, output[0, 0]);
             Assert.AreEqual(2, output[0, 1]);

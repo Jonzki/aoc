@@ -77,6 +77,8 @@
             {
                 Console.WriteLine("Part 2 is not implemented.");
             }
+
+            Console.ReadLine();
         }
 
         /// <summary>
