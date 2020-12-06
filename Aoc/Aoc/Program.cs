@@ -78,6 +78,7 @@
                 Console.WriteLine("Part 2 is not implemented.");
             }
 
+            Console.WriteLine("Enter to exit.");
             Console.ReadLine();
         }
 
