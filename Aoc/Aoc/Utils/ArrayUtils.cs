@@ -66,6 +66,20 @@ namespace Aoc.Utils
         }
 
         /// <summary>
+        /// Returns two-dimensional coordinates for the input index on a map.
+        /// </summary>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public static (int X, int Y) GetCoordinates(int width, int height, int index)
+        {
+            var x = index % width;
+            var y = (index - x) / height;
+            return (x, y);
+        }
+
+        /// <summary>
         /// Returns the "height" of the input two-dimensional array.
         /// </summary>
         /// <typeparam name="T"></typeparam>

@@ -49,5 +49,39 @@ namespace Aoc.Tests.Utils
 
             CollectionAssert.AreEqual(input, output);
         }
+
+        [TestMethod]
+        public void GetCoordinates_Works()
+        {
+            // Model a 2x3 array.
+            var positions = new (int Index, int X, int Y)[] {
+                (0, 0,0),
+                (1, 1,0),
+                (2, 2,0),
+                (3, 0,1),
+                (4, 1,1),
+                (5, 2,1)
+            };
+
+            foreach (var pos in positions)
+            {
+                var coords = ArrayUtils.GetCoordinates(3, 2, pos.Index);
+                Assert.AreEqual((pos.X, pos.Y), (coords.X, coords.Y));
+            }
+        }
+
+        [TestMethod]
+        public void CoordinateConversion_Is_Invertable()
+        {
+            // 2x3 array.
+            for (int i = 0; i < 6; ++i)
+            {
+                var (x, y) = ArrayUtils.GetCoordinates(3, 2, i);
+                var index = ArrayUtils.GetIndex(x, y, 3);
+
+                Assert.AreEqual(i, index);
+            }
+        }
+
     }
 }
