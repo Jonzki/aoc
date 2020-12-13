@@ -29,6 +29,12 @@
                     {
                         problem = Activator.CreateInstance(type) as IProblem;
                     }
+                    else
+                    {
+                        Console.WriteLine($"No solver found for {year}.{problemNumber} - not implemented?");
+                        problem = null;
+                        continue;
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -40,14 +46,13 @@
                 // Solver found & constructed - cache the input.
                 SaveInputSuggestion(year, problemNumber);
 
-                Console.WriteLine("Getting input.");
                 try
                 {
                     problemInput = ProblemInput.ReadInput(year, problemNumber);
                 }
                 catch (FileNotFoundException f)
                 {
-                    Console.WriteLine($"Failed to get input for problem {problemNumber}: " + f.Message);
+                    Console.WriteLine($"Failed to get input for problem {year}.{problemNumber}: " + f.Message);
                     problem = null;
                 }
             }
@@ -116,7 +121,8 @@
         {
             while (true)
             {
-                var (year, problemNumber) = GetInputSuggestion();
+                var suggestion = GetInputSuggestion();
+                int year = suggestion.Year, problemNumber = suggestion.Number;
 
                 Console.Write($"Problem number ({year}.{problemNumber}): ");
                 var input = Console.ReadLine();
@@ -130,9 +136,18 @@
                 {
                     return (year, problemNumber);
                 }
-                else if (parts.Length == 2 && int.TryParse(parts[0], out year) && int.TryParse(parts[1], out problemNumber))
+                else if (parts.Length == 2)
                 {
-                    return (year, problemNumber);
+                    // Both inputs given.
+                    if (int.TryParse(parts[0], out year) && int.TryParse(parts[1], out problemNumber))
+                    {
+                        return (year, problemNumber);
+                    }
+                    // Only latter input given - use suggestion year but override the problem number.
+                    if (string.IsNullOrWhiteSpace(parts[0]) && int.TryParse(parts[1], out problemNumber))
+                    {
+                        return (suggestion.Year, problemNumber);
+                    }
                 }
                 Console.WriteLine("Invalid input.");
             }
