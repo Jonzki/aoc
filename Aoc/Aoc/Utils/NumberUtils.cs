@@ -1,4 +1,6 @@
-﻿namespace Aoc.Utils
+﻿using System;
+
+namespace Aoc.Utils
 {
     public static class NumberUtils
     {
@@ -26,5 +28,9 @@
         public static bool Between(this long value, long from, long to) => from < value && value < to;
 
         public static bool BetweenInclusive(this long value, long from, long to) => from <= value && value <= to;
+
+        public static int ManhattanDistance(int x1, int y1, int x2, int y2) => Math.Abs(x2 - x1) + Math.Abs(y2 - y1);
+
+        public static int ManhattanDistance((int x, int y) a, (int x, int y) b) => ManhattanDistance(a.x, a.y, b.x, b.y);
     }
 }
