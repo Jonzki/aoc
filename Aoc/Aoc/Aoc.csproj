@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="C:\Users\saarjo\source\repos\aoc\Aoc\Aoc\.editorconfig" />
     <None Include="Utils\ObjectUtils.cs" />
   </ItemGroup>
 
@@ -77,12 +78,19 @@
     <None Update="Inputs\2020\2020.9.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Inputs\2021\2021.3.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Inputs\2021\2021.1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Inputs\2021\2021.2.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EditorConfigFiles Remove="C:\Users\saarjo\source\repos\aoc\Aoc\Aoc\.editorconfig" />
   </ItemGroup>
 
 </Project>

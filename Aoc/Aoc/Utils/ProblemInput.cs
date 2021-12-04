@@ -1,5 +1,6 @@
 ﻿namespace Aoc.Utils
 {
+    using System;
     using System.IO;
     using System.Linq;
 
@@ -17,6 +18,16 @@
                 return File.ReadAllText(filePath);
             }
             throw new FileNotFoundException($"Input file {fileName} could not be found.", fileName);
+        }
+
+        public static string[] ParseList(string input)
+        {
+            return input.Split(new string[] { Environment.NewLine, ";" }, StringSplitOptions.RemoveEmptyEntries);
+        }
+
+        public static int[] ParseNumberList(string input)
+        {
+            return ParseList(input).Select(int.Parse).ToArray();
         }
     }
 }

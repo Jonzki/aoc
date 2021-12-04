@@ -2,6 +2,7 @@
 {
     using Aoc.Utils;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using System.Collections;
 
     [TestClass]
     public class NumberUtilsTests
