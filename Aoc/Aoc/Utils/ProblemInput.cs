@@ -20,14 +20,22 @@
             throw new FileNotFoundException($"Input file {fileName} could not be found.", fileName);
         }
 
-        public static string[] ParseList(string input)
+        public static string[] ParseList(string input, params string[] separators)
         {
-            return input.Split(new string[] { Environment.NewLine, ";" }, StringSplitOptions.RemoveEmptyEntries);
+            if (separators.Length > 0)
+            {
+                return input.Split(separators, StringSplitOptions.RemoveEmptyEntries);
+            }
+            else
+            {
+                return input.Split(new string[] { Environment.NewLine, ";" }, StringSplitOptions.RemoveEmptyEntries);
+            }
+
         }
 
-        public static int[] ParseNumberList(string input)
+        public static int[] ParseNumberList(string input, params string[] separators)
         {
-            return ParseList(input).Select(int.Parse).ToArray();
+            return ParseList(input, separators).Select(int.Parse).ToArray();
         }
     }
 }
