@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -42,7 +43,6 @@ public class Problem8 : IProblem
         foreach (var line in lines)
         {
             var temp = ParseNumber(line);
-            Console.WriteLine(temp);
             output += temp;
         }
 
@@ -53,11 +53,6 @@ public class Problem8 : IProblem
     {
         var values = input.Split(new[] { "|", " " }, StringSplitOptions.RemoveEmptyEntries);
         var sorted = values.Select(x => new string(x.ToCharArray().OrderBy(c => c).ToArray())).ToArray();
-
-        for (var i = 0; i < sorted.Length; i++)
-        {
-            Console.WriteLine($"{values[i]} - {sorted[i]}");
-        }
 
         var n = new string[10];
 
@@ -70,98 +65,80 @@ public class Problem8 : IProblem
         //  66
         var digits = new char[7] { '_', '_', '_', '_', '_', '_', '_' };
 
-        bool HasDigits(string input, params int[] digitPositions)
+        int ResolveNumber(string input, char[] codec)
         {
-            return digitPositions.All(d => input.Contains(digits[d]));
-        }
-
-        bool HasChars(string input, string digits)
-        {
-            return digits.All(d => input.Contains(d));
-        }
-
-        int ResolveNumber(string input)
-        {
-            // Easy ones.
-            if (input.Length == 7) return 8;
-            if (input.Length == 3) return 7;
-            if (input.Length == 2) return 1;
-            if (input.Length == 4) return 4;
-
-            // Use digits for the rest.
-            if (input.Length == 5) // 2,3,5
+            // Calculate a bitmask of sorts.
+            var bitArray = new BitArray(7);
+            for (var i = 0; i < 7; i++)
             {
-                // Only 5 has digit 1.
-                if (HasDigits(input, 1)) return 5;
-
-                // 2 has digit 4.
-                if (HasDigits(input, 4)) return 2;
-
-                return 3;
+                bitArray[i] = input.Contains(codec[i]);
             }
 
-            if (input.Length == 6) // 0, 6, 9
-            {
-                // 0 does not have digit 3.
-                if (!HasDigits(input, 3)) return 0;
-
-                // Only 9 has digit 2.
-                if (HasDigits(input, 2)) return 9;
-
-                // This leaves 6.
-                return 6;
-            }
-
-            return -1;
+            return Array.IndexOf(BitArrayLookup, bitArray.ToInteger());
         }
 
-        // Find the easy numbers: 1,4,7,8.
-        n[1] = sorted.First(x => x.Length == 2);
-        n[4] = sorted.First(x => x.Length == 4);
-        n[7] = sorted.First(x => x.Length == 3);
-        n[8] = sorted.First(x => x.Length == 7);
-
-        // Use 1 & 7 for the first digit.
-        digits[0] = n[7].Replace(n[1], "")[0];
-
-        // 3 has 5 segments and contains 1.
-        n[3] = sorted.First(x => x.Length == 5 && HasChars(x, n[1]));
-
-        // From 3, remove 7 and 4 to get the bottom digit.
-        digits[6] = n[3].Except(n[7]).Except(n[4]).First();
-
-        // Same trick to resolve the middle segment. Remove 7 and the bottom digit.
-        digits[3] = n[3].Except(n[7]).Except(digits).First();
-
-        // Reduce 4 to get the 1-digit.
-        digits[1] = n[4].Except(n[1]).Except(digits).First();
-
-        // We have all but 1 digit for 5.
-        n[5] = sorted.First(x => x.Length == 5 && HasDigits(x, 0, 1, 3, 6));
-
-        // We can also get digit 5 now, we know all others.
-        digits[5] = n[5].Except(digits).First();
-
-        // Digit 2 can be resolved now, using 1.
-        digits[2] = n[1].Except(digits).First();
-
-        // This leaves only digit 4.
-        digits[4] = "abcdefg".Except(digits).First();
-
-
-        // Calculate the output.
-        int output = 0;
-        for (int i = 0; i < 4; ++i)
+        // Process the entire input with each permutation, look for one that produces valid numbers.
+        foreach (var perm in GetPermutations())
         {
-            var num = ResolveNumber(values[values.Length - 1 - i]);
-            output += (int)Math.Pow(10, i) * num;
+            var numbers = values.Select(x => ResolveNumber(x, perm)).ToArray();
+            // Check if permutation is valid.
+            if (numbers.Contains(-1)) continue;
+
+            // Permutation was valid - build the output number.
+            var output = 0;
+            for (var i = 0; i < 4; ++i)
+            {
+                output += numbers[numbers.Length - 1 - i] * (int)Math.Pow(10, i);
+            }
+            return output;
         }
 
-        return output;
+        return -1;
     }
 
+    // Construct a bitArray lookup for each digit.
+    private static int[] BitArrayLookup { get; } = new[]
+        {
+            "1110111",
+            "0010010",
+            "1011101",
+            "1011011",
+            "0111010",
+            "1101011",
+            "1101111",
+            "1010010",
+            "1111111",
+            "1111011"
+        }.Select(x => BitArrayUtils.Parse(x).ToInteger()).ToArray();
+
+    private static List<char[]> _permutations = null;
+
+    private static List<char[]> GetPermutations()
+    {
+        if (_permutations == null)
+        {
+            _permutations = BuildPermutations(Array.Empty<char>(), "abcdefg".ToCharArray());
+        }
+        return _permutations;
+    }
+
+    /// <summary>
+    /// Returns all 7-digit permutations possible.
+    /// </summary>
+    /// <param name="current"></param>
+    /// <param name="input"></param>
+    /// <returns></returns>
+    private static List<char[]> BuildPermutations(IEnumerable<char> current, IEnumerable<char> input)
+    {
 
 
-
-
+        var perms = new List<char[]>();
+        if (!input.Any()) { return new List<char[]> { current.ToArray() }; }
+        foreach (var c in "abcdefg")
+        {
+            if (current.Contains(c)) continue;
+            perms.AddRange(BuildPermutations(current.Append(c), input.Except(new[] { c })));
+        }
+        return perms;
+    }
 }
