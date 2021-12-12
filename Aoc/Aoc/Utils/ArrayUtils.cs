@@ -95,5 +95,24 @@ namespace Aoc.Utils
         /// <returns></returns>
         public static int Width<T>(this T[,] array) => array.GetLength(1);
 
+        /// <summary>
+        /// Returns a value from the 2D array based on input coordinates.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="array"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        public static T Get<T>(this T[,] array, int x, int y) => array[y, x];
+
+        public static bool TryGet<T>(this T[,] array, int x, int y, out T value)
+        {
+            value = default;
+            if (x < 0 || x >= array.Width()) return false;
+            if (y < 0 || y >= array.Height()) return false;
+
+            value = array[y, x];
+            return true;
+        }
     }
 }
