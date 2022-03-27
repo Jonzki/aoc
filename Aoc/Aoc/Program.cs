@@ -3,6 +3,7 @@
     using Aoc.Utils;
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.IO;
     using System.Linq;
 
@@ -59,14 +60,19 @@
             }
 
             Console.WriteLine($"{problem.GetType().Name} -> Solving part 1..");
+            var stopwatch = new Stopwatch();
 
             try
             {
+                stopwatch.Restart();
                 var result1 = problem.Solve1(problemInput);
+                stopwatch.Stop();
+                Console.WriteLine($"Part 1 solved in {stopwatch.Elapsed}.");
                 Console.WriteLine($"Result 1: " + (result1 ?? "NULL"));
             }
             catch (NotImplementedException)
             {
+                stopwatch.Stop();
                 Console.WriteLine("Part 1 is not implemented.");
             }
 
@@ -76,11 +82,15 @@
 
             try
             {
+                stopwatch.Restart();
                 var result2 = problem.Solve2(problemInput);
+                stopwatch.Stop();
+                Console.WriteLine($"Part 2 solved in {stopwatch.Elapsed}.");
                 Console.WriteLine($"Result 2: " + (result2 ?? "NULL"));
             }
             catch (NotImplementedException)
             {
+                stopwatch.Stop();
                 Console.WriteLine("Part 2 is not implemented.");
             }
 

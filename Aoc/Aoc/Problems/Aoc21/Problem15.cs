@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Aoc.Utils;
 
@@ -9,6 +10,11 @@ public class Problem15 : IProblem
 {
     public const string MiniInput = @"12
 11";
+
+    public const string MiniInput2 = @"123
+111
+321";
+
 
     public const string MazeInput = @"19111
 19191
@@ -28,151 +34,219 @@ public class Problem15 : IProblem
 
     public object Solve1(string input)
     {
-        // Parse the map.
-        var map = Map.Parse(input);
+        var (nodes, width, height) = ParseMap1(input);
 
-        //map.Print();
+        var risk = FindBestPathDijkstra(nodes);
 
-        Console.WriteLine(new string('-', map.Width));
-
-        // Start at 0,0 with risk 0.
-        var path = new Path
-        {
-            Points = new List<Point2D>() { new(0, 0) },
-            Risk = 0
-        };
-
-        FindBestPath(map, path);
-
-        Console.WriteLine($"Best path found with a risk of {map.BestPath.Risk}:");
-        map.Print(map.BestPath);
-
-        return map.BestPath?.Risk ?? -1;
+        return risk;
     }
 
     public object Solve2(string input)
     {
-        throw new NotImplementedException();
+        var (nodes, width, height) = ParseMap2(input);
+
+        var risk = FindBestPathDijkstra(nodes);
+
+        return risk;
     }
-
-    public class Map
-    {
-        public long[,] Points { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
-
-        public Path BestPath { get; set; }
-
-        /// <summary>
-        /// Parses a map from the problem input.
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        public static Map Parse(string input)
-        {
-            var lines = input.SplitLines();
-            var width = lines[0].Length;
-            var height = lines.Length;
-
-            var temp = lines.SelectMany(l => l.Select(c => (long)(c - '0'))).ToArray();
-
-            var points = ArrayUtils.To2D(temp, width, height);
-
-            return new Map
-            {
-                Points = points,
-                Width = width,
-                Height = height
-            };
-        }
-
-        public void Print(Path path = null)
-        {
-            for (var y = 0; y < Height; y++)
-            {
-                for (var x = 0; x < Width; x++)
-                {
-                    if (path != null && path.Points.Contains(new(x, y)))
-                    {
-                        Console.Write("#");
-                    }
-                    else
-                    {
-                        Console.Write(Points.Get(x, y));
-                    }
-                }
-                Console.WriteLine();
-            }
-        }
-    }
-
 
     /// <summary>
-    /// Finds the best path (lowest risk) from 0,0 to (w,h).
+    /// Parses a map of Nodes from the problem input (Dijkstra approach).
     /// </summary>
-    /// <param name="map"></param>
-    /// <param name="path"></param>
+    /// <param name="input"></param>
     /// <returns></returns>
-    long FindBestPath(Map map, Path path)
+    public static (List<Node> Nodes, int Width, int Height) ParseMap1(string input)
     {
-        // Find all possible next steps.
-        var pos = path.Points.Last();
+        var lines = input.SplitLines();
+        var width = lines[0].Length;
+        var height = lines.Length;
 
-        if (pos.X == map.Width - 1 && pos.Y == map.Height - 1)
-        {
-            //Console.WriteLine($"Found a path to finish with a risk of {path.Risk}");
-            //map.Print(path);
-            if (map.BestPath == null || path.Risk < map.BestPath.Risk)
-            {
-                //Console.WriteLine("This path improves on previous best.");
-                map.BestPath = path;
-            }
-            return path.Risk;
-        }
+        var temp = lines.SelectMany(l => l.Select(c => (c - '0'))).ToArray();
 
-        var steps = new[]
-        {
-            pos.Left(), pos.Right(), pos.Up(), pos.Down()
-        }.Where(p => p.IsInBounds(map.Width, map.Height) && !path.Points.Contains(p));
+        var points = ArrayUtils.To2D(temp, width, height);
 
-        foreach (var p in steps)
+        var nodes = new List<Node>();
+        for (var y = 0; y < height; y++)
         {
-            // Test each step.
-            var potentialPath = path.Step(p, map.Points.Get(p));
-            if (map.BestPath != null && map.BestPath.Risk < potentialPath.Risk)
+            for (var x = 0; x < width; x++)
             {
-                // This path is already more risky than the best we've found - abort.
-                //Console.WriteLine($"Abort worse path, risk reached {potentialPath.Risk}.");
-            }
-            else
-            {
-                // This path still has potential to be the best - keep searching.
-                FindBestPath(map, potentialPath);
+                nodes.Add(new Node
+                {
+                    Position = new Point2D(x, y),
+                    Risk = points[y, x],
+                    RiskFromStart = 1_000_000_000,
+                    Visited = false
+                });
             }
         }
 
-        return path.Risk;
+        return (nodes, width, height);
     }
 
-    public class Path
+    /// <summary>
+    /// Parses a map of Nodes for part 2 of the problem.
+    /// </summary>
+    /// <param name="input"></param>
+    /// <returns></returns>
+    public static (List<Node> Nodes, int Width, int Height) ParseMap2(string input)
     {
-        public List<Point2D> Points { get; set; } = new();
-        public long Risk { get; set; } = 0;
+        var lines = input.SplitLines();
+        var width = lines[0].Length;
+        var height = lines.Length;
 
-        public Path Step(Point2D point, long risk)
+        var temp = lines.SelectMany(l => l.Select(c => (c - '0'))).ToArray();
+
+        var points = ArrayUtils.To2D(temp, width, height);
+
+        var nodes = new List<Node>();
+
+        // Run a 5 times multiplier for the coordinates.
+        // This makes the map way larger.
+        for (var y = 0; y < height; y++)
         {
-            return new Path
+            for (var x = 0; x < width; x++)
             {
-                Points = this.Points.Select(p => new Point2D(p)).Append(point).ToList(),
-                Risk = Risk + risk
-            };
+                for (int y2 = 0; y2 < 5; y2++)
+                {
+                    for (var x2 = 0; x2 < 5; x2++)
+                    {
+                        var riskValue = points[y, x] + x2 + y2;
+                        if (riskValue > 9) riskValue -= 9;
+
+                        nodes.Add(new Node
+                        {
+                            Position = new Point2D(x + x2 * width, y + y2 * height),
+                            Risk = riskValue,
+                            RiskFromStart = 1_000_000_000,
+                            Visited = false
+                        });
+                    }
+                }
+            }
         }
 
-        internal void Print()
-        {
-            Console.WriteLine($"Risk {Risk}: " + string.Join(",", Points));
-        }
+        nodes = nodes.OrderBy(n => n.Position.Y).ThenBy(n => n.Position.X).ToList();
+
+        return (nodes, width, height);
     }
 
+    public static int FindBestPathDijkstra(List<Node> input)
+    {
+        // Resolve the end position first.
+        var maxX = input.Max(n => n.Position.X);
+        var maxY = input.Max(n => n.Position.Y);
 
+        var width = maxX + 1;
+        var height = maxY + 1;
+
+        var endPosition = new Point2D(maxX, maxY);
+
+        List<Node> visitedNodes = new List<Node>();
+
+        // Construct a positional lookup (this leverages C# references).
+        var nodeMap = new Node[height, width];
+        // Also construct a priority queue
+        var priorityMap = new SortedDictionary<int, List<Node>>();
+
+        foreach (var node in input)
+        {
+            // Set the starting risk.
+            if (node.Position == (0, 0))
+            {
+                node.RiskFromStart = 0;
+            }
+
+            nodeMap[node.Position.X, node.Position.Y] = node;
+
+            priorityMap.TryAdd(node.RiskFromStart, new List<Node>());
+            priorityMap[node.RiskFromStart].Add(node);
+        }
+
+        // Run until we reach the target.
+        Node currentNode;
+        var i = 0;
+        do
+        {
+            ++i;
+            if (priorityMap.Count == 0) break;
+
+            // Find an unvisited node with the smallest risk value. Add a large value when sorting to push visited nodes to the back.
+            var minPrio = priorityMap.First();
+            // Since the risk value is the same in this pool, we should be safe to pick the last item.
+            currentNode = minPrio.Value.Last();
+            if (currentNode == null)
+            {
+                // Stop if no unvisited nodes could be found.
+                break;
+            }
+
+            // Find unvisited neighbors and calculate the risk value from start.
+            var neighborPositions = FindNeighborPositions(currentNode.Position, width, height);
+            foreach (var position in neighborPositions)
+            {
+                // Calculate the risk value from start for the node.
+                var neighbor = nodeMap[position.X, position.Y];
+
+                var previousRisk = neighbor.RiskFromStart;
+                neighbor.RiskFromStart = Math.Min(neighbor.RiskFromStart, currentNode.RiskFromStart + neighbor.Risk);
+                if (previousRisk != neighbor.RiskFromStart)
+                {
+                    // Need to move the item from old risk to new.
+                    priorityMap[previousRisk].Remove(neighbor);
+                    if (priorityMap[previousRisk].Count == 0)
+                    {
+                        priorityMap.Remove(previousRisk);
+                    }
+
+
+                    priorityMap.TryAdd(neighbor.RiskFromStart, new List<Node>());
+                    priorityMap[neighbor.RiskFromStart].Add(neighbor);
+                }
+            }
+
+            // Mark the current node as visited.
+            currentNode.Visited = true;
+
+            // Remove the current node from the minPrio list, this should remove it from the dictionary.
+            minPrio.Value.RemoveAt(minPrio.Value.Count - 1);
+            if (minPrio.Value.Count == 0)
+            {
+                priorityMap.Remove(minPrio.Key);
+            }
+
+            visitedNodes.Add(currentNode);
+
+            //if (currentNode.Position == endPosition)
+            //{
+            //    // Break out immediately when end position found.
+            //    break;
+            //}
+        } while (currentNode != null);
+
+        // Search complete. We should now have the smallest risk value as the "RiskFromStart" value of the final position.
+        var endNode = visitedNodes.FirstOrDefault(n => n.Position == endPosition);
+
+        return endNode?.RiskFromStart ?? -1;
+    }
+
+    public static Point2D[] FindNeighborPositions(Point2D position, int width, int height)
+    {
+        return new[]
+        {
+            position.Left(),
+            position.Right(),
+            position.Up(),
+            position.Down()
+        }.Where(p => p.IsInBounds(width, height)).ToArray();
+    }
+
+    public class Node
+    {
+        public Point2D Position { get; set; }
+
+        public int Risk { get; set; }
+        public int RiskFromStart { get; set; }
+
+        public bool Visited { get; set; }
+    }
 }

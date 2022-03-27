@@ -128,6 +128,7 @@ public class Problem10 : IProblem
                 '[' => ']',
                 '{' => '}',
                 '<' => '>',
+                _ => throw new InvalidOperationException($"Unexpected character: '{c}'")
             });
 
             // Update the score.
@@ -137,6 +138,7 @@ public class Problem10 : IProblem
                 ']' => 2,
                 '}' => 3,
                 '>' => 4,
+                _ => throw new InvalidOperationException($"Unexpected character: '{c}'")
             };
         }
 
