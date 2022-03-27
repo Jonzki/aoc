@@ -3,6 +3,7 @@
     using Aoc.Utils;
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.IO;
     using System.Linq;
 
@@ -12,14 +13,15 @@
 
         private static void Main(string[] args)
         {
-            var problemTypes = GetProblemTypes();
+            // Sort available problem types descending, newest first.
+            var problemTypes = GetProblemTypes().OrderByDescending(x => x.Year).ThenByDescending(x => x.Number).ToList();
 
             IProblem problem = null;
             string problemInput = null;
 
             while (problem == null)
             {
-                var (year, problemNumber) = ReadProblemInput();
+                var (year, problemNumber) = ReadProblemInput(problemTypes);
 
                 // Attempt to resolve a Problem class.
                 try
@@ -58,14 +60,19 @@
             }
 
             Console.WriteLine($"{problem.GetType().Name} -> Solving part 1..");
+            var stopwatch = new Stopwatch();
 
             try
             {
+                stopwatch.Restart();
                 var result1 = problem.Solve1(problemInput);
+                stopwatch.Stop();
+                Console.WriteLine($"Part 1 solved in {stopwatch.Elapsed}.");
                 Console.WriteLine($"Result 1: " + (result1 ?? "NULL"));
             }
             catch (NotImplementedException)
             {
+                stopwatch.Stop();
                 Console.WriteLine("Part 1 is not implemented.");
             }
 
@@ -75,11 +82,15 @@
 
             try
             {
+                stopwatch.Restart();
                 var result2 = problem.Solve2(problemInput);
+                stopwatch.Stop();
+                Console.WriteLine($"Part 2 solved in {stopwatch.Elapsed}.");
                 Console.WriteLine($"Result 2: " + (result2 ?? "NULL"));
             }
             catch (NotImplementedException)
             {
+                stopwatch.Stop();
                 Console.WriteLine("Part 2 is not implemented.");
             }
 
@@ -117,11 +128,11 @@
         /// Reads requested problem year and number to solve.
         /// </summary>
         /// <returns></returns>
-        private static (int Year, int Number) ReadProblemInput()
+        private static (int Year, int Number) ReadProblemInput(List<(int Year, int Number, Type Type)> problemTypes)
         {
             while (true)
             {
-                var suggestion = GetInputSuggestion();
+                var suggestion = GetInputSuggestion(problemTypes);
                 int year = suggestion.Year, problemNumber = suggestion.Number;
 
                 Console.Write($"Problem number ({year}.{problemNumber}): ");
@@ -153,7 +164,7 @@
             }
         }
 
-        private static (int Year, int Number) GetInputSuggestion()
+        private static (int Year, int Number) GetInputSuggestion(List<(int Year, int Number, Type Type)> problemTypes)
         {
             // Check if we have a cache file.
             int year = 0, problemNumber = 0;
@@ -177,6 +188,13 @@
                 catch { }// Don't care about the cache failing - just return today's problem.
             }
 
+            // Suggest the latest implemented problem.
+            var latestProblem = problemTypes.FirstOrDefault();
+            if (latestProblem.Year > 0)
+            {
+                return (latestProblem.Year, latestProblem.Number);
+            }
+            // If no problems are implemented, suggest "todays problem".
             return (DateTime.Today.Year, DateTime.Today.Day);
         }
 

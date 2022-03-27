@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Aoc.Utils;
 
@@ -50,6 +45,26 @@ public class Point2D
     public static bool operator !=(Point2D a, Point2D b)
     {
         return !(a == b);
+    }
+
+    #region Directional builders 
+
+    public Point2D Left() => new(X - 1, Y);
+    public Point2D Right() => new(X + 1, Y);
+    public Point2D Up() => new(X, Y - 1);
+    public Point2D Down() => new(X, Y + 1);
+
+    #endregion
+
+    /// <summary>
+    /// Returns true if the point is in given boundaries, false otherwise.
+    /// </summary>
+    /// <param name="width"></param>
+    /// <param name="height"></param>
+    /// <returns></returns>
+    public bool IsInBounds(int width, int height)
+    {
+        return X >= 0 && X < width && Y >= 0 && Y < height;
     }
 
     public override bool Equals(object obj)
