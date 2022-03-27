@@ -12,14 +12,15 @@
 
         private static void Main(string[] args)
         {
-            var problemTypes = GetProblemTypes();
+            // Sort available problem types descending, newest first.
+            var problemTypes = GetProblemTypes().OrderByDescending(x => x.Year).ThenByDescending(x => x.Number).ToList();
 
             IProblem problem = null;
             string problemInput = null;
 
             while (problem == null)
             {
-                var (year, problemNumber) = ReadProblemInput();
+                var (year, problemNumber) = ReadProblemInput(problemTypes);
 
                 // Attempt to resolve a Problem class.
                 try
@@ -117,11 +118,11 @@
         /// Reads requested problem year and number to solve.
         /// </summary>
         /// <returns></returns>
-        private static (int Year, int Number) ReadProblemInput()
+        private static (int Year, int Number) ReadProblemInput(List<(int Year, int Number, Type Type)> problemTypes)
         {
             while (true)
             {
-                var suggestion = GetInputSuggestion();
+                var suggestion = GetInputSuggestion(problemTypes);
                 int year = suggestion.Year, problemNumber = suggestion.Number;
 
                 Console.Write($"Problem number ({year}.{problemNumber}): ");
@@ -153,7 +154,7 @@
             }
         }
 
-        private static (int Year, int Number) GetInputSuggestion()
+        private static (int Year, int Number) GetInputSuggestion(List<(int Year, int Number, Type Type)> problemTypes)
         {
             // Check if we have a cache file.
             int year = 0, problemNumber = 0;
@@ -177,6 +178,13 @@
                 catch { }// Don't care about the cache failing - just return today's problem.
             }
 
+            // Suggest the latest implemented problem.
+            var latestProblem = problemTypes.FirstOrDefault();
+            if (latestProblem.Year > 0)
+            {
+                return (latestProblem.Year, latestProblem.Number);
+            }
+            // If no problems are implemented, suggest "todays problem".
             return (DateTime.Today.Year, DateTime.Today.Day);
         }
 

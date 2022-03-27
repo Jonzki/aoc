@@ -105,6 +105,15 @@ namespace Aoc.Utils
         /// <returns></returns>
         public static T Get<T>(this T[,] array, int x, int y) => array[y, x];
 
+        /// <summary>
+        /// Returns a value from the 2D array based on input coordinates.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="array"></param>
+        /// <param name="point"></param>
+        /// <returns></returns>
+        public static T Get<T>(this T[,] array, Point2D point) => array[point.Y, point.X];
+
         public static bool TryGet<T>(this T[,] array, int x, int y, out T value)
         {
             value = default;
