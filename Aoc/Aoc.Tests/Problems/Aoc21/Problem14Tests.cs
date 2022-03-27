@@ -40,4 +40,17 @@ CN -> C";
 
     [TestMethod]
     public void Part2_SmallInput_Is_Correct() => RunPart2(CorrectOutput2, SmallInput);
+
+    [DataTestMethod]
+    [DataRow(1L, "NNCB")]
+    [DataRow(5L, "NBCCNBBBCBHCB")]
+    [DataRow(7L, "NBBBCNCCNBBNBNBBCHBHHBCHB")]
+    public void CalculateScore_Works(long expectedScore, string input)
+    {
+        var (pairCounts, startChar, endChar) = Problem14.ParsePairCounts(input);
+        var score = Problem14.CalculateScore(pairCounts, startChar, endChar);
+
+        Assert.AreEqual(expectedScore, score);
+    }
+
 }
