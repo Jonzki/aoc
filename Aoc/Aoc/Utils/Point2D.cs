@@ -47,6 +47,10 @@ public class Point2D
         return !(a == b);
     }
 
+    public static Point2D operator +(Point2D a, Point2D b) => new Point2D(a.X + b.X, a.Y + b.Y);
+
+    public static Point2D operator -(Point2D a, Point2D b) => new Point2D(a.X + b.X, a.Y + b.Y);
+
     #region Directional builders 
 
     public Point2D Left() => new(X - 1, Y);
@@ -65,6 +69,18 @@ public class Point2D
     public bool IsInBounds(int width, int height)
     {
         return X >= 0 && X < width && Y >= 0 && Y < height;
+    }
+
+    /// <summary>
+    /// Returns true if the point is within a rectangle described by the two opposing corners.
+    /// </summary>
+    /// <param name="corner1"></param>
+    /// <param name="corner2"></param>
+    /// <returns></returns>
+    public bool IsWithin(Point2D corner1, Point2D corner2)
+    {
+        return X.BetweenInclusive(corner1.X, corner2.X)
+            && Y.BetweenInclusive(corner1.Y, corner2.Y);
     }
 
     public override bool Equals(object obj)
