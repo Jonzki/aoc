@@ -13,7 +13,7 @@ public class Problem16 : IProblem
 {
     public object Solve1(string input)
     {
-        var bitArray = BitArrayUtils.HexToBitArray(input); 
+        var bitArray = BitArrayUtils.HexToBitArray(input);
 
         var packet = Packet.Parse(bitArray);
 
@@ -22,7 +22,11 @@ public class Problem16 : IProblem
 
     public object Solve2(string input)
     {
-        throw new NotImplementedException();
+        var bitArray = BitArrayUtils.HexToBitArray(input);
+
+        var packet = Packet.Parse(bitArray);
+
+        return packet.CalculateValue();
     }
 
     public enum PacketType
@@ -126,6 +130,44 @@ public class Problem16 : IProblem
         /// </summary>
         /// <returns></returns>
         public int VersionSum() => Version + Subpackets.Sum(p => p.VersionSum());
+
+        /// <summary>
+        /// Calculates the (part 2) value for the Packet.
+        /// </summary>
+        /// <returns></returns>
+        public long CalculateValue()
+        {
+            return PacketType switch
+            {
+                // type ID 0 are sum packets
+                0 => Subpackets.Sum(p => p.CalculateValue()),
+                // type ID 1 are "product" packets
+                1 => CalculateProduct(),
+                // type ID 2 are "minimum" packets
+                2 => Subpackets.Min(p => p.CalculateValue()),
+                // type ID 3 are "maximum" packets
+                3 => Subpackets.Max(p => p.CalculateValue()),
+                // type ID 4 is the literal value.
+                4 => LiteralValue,
+                // type ID 5 are "greater than" packets
+                5 => Subpackets[0].CalculateValue() > Subpackets[1].CalculateValue() ? 1L : 0L,
+                // type ID 6 are "less than" packets
+                6 => Subpackets[0].CalculateValue() < Subpackets[1].CalculateValue() ? 1L : 0L,
+                // type ID 7 are "equal to" packets
+                7 => Subpackets[0].CalculateValue() == Subpackets[1].CalculateValue() ? 1L : 0L,
+                _ => throw new InvalidOperationException($"Unrecognized Packet Type {PacketType}.")
+            };
+        }
+
+        private long CalculateProduct()
+        {
+            var result = 1L;
+            foreach (var packet in Subpackets)
+            {
+                result *= packet.CalculateValue();
+            }
+            return result;
+        }
     }
 
     public class Cursor

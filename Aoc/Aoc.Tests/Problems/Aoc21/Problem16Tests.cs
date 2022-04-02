@@ -26,8 +26,16 @@ public class Problem16Tests : ProblemTests<Problem16>
     [DataRow(31, "A0016C880162017C3686B18A3D4780")]
     public void Part1_SmallInput_Is_Correct(int correctOutput, string input) => RunPart1(correctOutput, input);
 
-    [TestMethod]
-    public void Part2_SmallInput_Is_Correct() => RunPart2(CorrectOutput2, SmallInput);
+    [DataTestMethod]
+    [DataRow(3L, "C200B40A82")]
+    [DataRow(54L, "04005AC33890")]
+    [DataRow(7L, "880086C3E88112")]
+    [DataRow(9L, "CE00C43D881120")]
+    [DataRow(1L, "D8005AC2A8F0")]
+    [DataRow(0L, "F600BC2D8F")]
+    [DataRow(0L, "9C005AC2F8F0")]
+    [DataRow(1L, "9C0141080250320F1802104A08")]
+    public void Part2_SmallInput_Is_Correct(long correctOutput, string input) => RunPart2(correctOutput, input);
 
     [TestMethod]
     public void PacketParse_Handles_LiteralValue()
