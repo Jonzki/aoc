@@ -10,7 +10,7 @@ public class Problem17Tests : ProblemTests<Problem17>
 
     protected override object CorrectOutput1 => 45;
 
-    protected override object CorrectOutput2 => 0L;
+    protected override object CorrectOutput2 => 112;
 
     [TestMethod]
     public void Part1_SmallInput_Is_Correct()

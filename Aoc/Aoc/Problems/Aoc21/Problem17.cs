@@ -19,16 +19,67 @@ public class Problem17 : IProblem
         // We should be shooting so high that we can always hit the target in terms of horizontal positioning.
         // Iterate on the Y velocity.
 
+        var verticalVelos = ResolveVerticalVelocities(target);
+
+        var maxHeight = verticalVelos.Max(x => x.maxHeight);
+
+        Debug.WriteLine($"Max height after iterations: {maxHeight}.");
+        return maxHeight;
+    }
+
+    public object Solve2(string input)
+    {
+        var coords = ProblemInput.ParseNumberList(input, ",");
+        var target = new Target(coords[0], coords[1], coords[2], coords[3]);
+
+        // For part 2, first resolve all Y velocities that hit the target, similar to part 1.
+        // Then, fill in X velocities that can hit.
+
+        var verticalVelos = ResolveVerticalVelocities(target, 250);
+
+        Debug.WriteLine($"Found {verticalVelos.Count} Y velocities that hit.");
+
+        // Then, count all X velocities that hit.
+        int hitCount = 0;
+
+        Debug.WriteLine($"Testing {verticalVelos.Count * target.MaxX} trajectories..");
+        foreach (var y in verticalVelos)
+        {
+            // Generous limits: X velocity must be between 1 and target.MinX to have any chance of hitting.
+            // This definitely scans too high horizontal velocities.
+            for (var vX = 1; vX <= target.MaxX; ++vX)
+            {
+                // Simulate the probe.
+                var probe = new Probe
+                {
+                    Position = new Point2D(0, 0),
+                    Velocity = new Point2D(vX, y.vY)
+                };
+                var hit = Simulate(probe, target);
+                if (hit)
+                {
+                    // Store the velocity in the output.
+                    ++hitCount;
+
+                    //Debug.WriteLine($"Hit on {new Point2D(vX, y.vY)}, up to {hitCount}.");
+                }
+            }
+        }
+
+        return hitCount;
+    }
+
+    public List<(int vY, int maxHeight)> ResolveVerticalVelocities(Target target, int maxConsecutiveMisses = 100)
+    {
+        var output = new List<(int vY, int maxHeight)>();
+
         var yLimit = 5000;
 
-        var maxHeight = 0;
-        var maxHeightVelocityY = 0;
-
         var firstHit = false;
-        var maxConsecutive = 100;
         var consecutiveMisses = 0;
 
-        for (int vY = 1; vY < yLimit; ++vY)
+        // Start from target.MinY - we might shoot directly at the target.
+        for (int vY = target.MinY; vY <= yLimit; ++vY)
         {
             // Generate a probe and simulate it's flight.
             // Put X within the target and X-velocity to zero.
@@ -44,13 +95,10 @@ public class Problem17 : IProblem
                 // Mark first hit as true.
                 firstHit = true;
 
-                Console.WriteLine($"Velocity {vY} hits target and reaches {probe.MaxHeight}.");
-                if (probe.MaxHeight > maxHeight)
-                {
-                    maxHeight = probe.MaxHeight;
-                    maxHeightVelocityY = vY;
-                }
+                //Debug.WriteLine($"Velocity {vY} hits target and reaches {probe.MaxHeight}.");
+                output.Add((vY, probe.MaxHeight));
 
+                // Reset miss counter.
                 consecutiveMisses = 0;
             }
             else
@@ -58,20 +106,14 @@ public class Problem17 : IProblem
                 consecutiveMisses++;
             }
 
-            if (firstHit && consecutiveMisses > maxConsecutive)
+            if (firstHit && consecutiveMisses > maxConsecutiveMisses)
             {
-                Debug.WriteLine($"{consecutiveMisses} misses - stop looking.");
+                //Debug.WriteLine($"{consecutiveMisses} misses - stop looking.");
                 break;
             }
         }
 
-        Debug.WriteLine($"Max height after {yLimit} iterations: {maxHeight} on velocity {maxHeightVelocityY}");
-        return maxHeight;
-    }
-
-    public object Solve2(string input)
-    {
-        throw new NotImplementedException();
+        return output;
     }
 
     public bool Simulate(Probe probe, Target target)
@@ -148,5 +190,4 @@ public class Problem17 : IProblem
         public int MinY { get; }
         public int MaxY { get; }
     }
-
 }
