@@ -25,7 +25,7 @@ public class Problem6 : IProblem
         var fish = new long[9];
 
         // Fill in the initial state.
-        foreach (var f in ProblemInput.ParseNumberList(input, ","))
+        foreach (var f in InputReader.ParseNumberList(input, ","))
         {
             fish[f]++;
         }

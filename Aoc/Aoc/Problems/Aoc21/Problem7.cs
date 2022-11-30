@@ -11,7 +11,7 @@ public class Problem7 : IProblem
 {
     public object Solve1(string input)
     {
-        var crabs = ProblemInput.ParseNumberList(input, ",");
+        var crabs = InputReader.ParseNumberList(input, ",");
 
         // Find minimum & maximum.
         int min = int.MaxValue, max = int.MinValue;
@@ -41,7 +41,7 @@ public class Problem7 : IProblem
 
     public object Solve2(string input)
     {
-        var crabs = ProblemInput.ParseNumberList(input, ",");
+        var crabs = InputReader.ParseNumberList(input, ",");
 
         // Find minimum & maximum.
         int min = int.MaxValue, max = int.MinValue;
