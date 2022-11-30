@@ -83,7 +83,4 @@ public class Problem2 : IProblem
         var value = Math.Abs(int.Parse(parts[1]));
         return (command, value);
     }
-
-
-
 }

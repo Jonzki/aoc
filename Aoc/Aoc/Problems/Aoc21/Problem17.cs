@@ -12,7 +12,7 @@ public class Problem17 : IProblem
 {
     public object Solve1(string input)
     {
-        var coords = ProblemInput.ParseNumberList(input, ",");
+        var coords = InputReader.ParseNumberList(input, ",");
         var target = new Target(coords[0], coords[1], coords[2], coords[3]);
 
         // For part 1, we don't actually have to care about the X velocity.
@@ -29,7 +29,7 @@ public class Problem17 : IProblem
 
     public object Solve2(string input)
     {
-        var coords = ProblemInput.ParseNumberList(input, ",");
+        var coords = InputReader.ParseNumberList(input, ",");
         var target = new Target(coords[0], coords[1], coords[2], coords[3]);
 
         // For part 2, first resolve all Y velocities that hit the target, similar to part 1.

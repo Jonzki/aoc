@@ -12,13 +12,13 @@ public class Problem3 : IProblem
 {
     public object Solve1(string input)
     {
-        var binaries = ProblemInput.ParseList(input);
+        var binaries = InputReader.ParseList(input);
         return MeasurePower(binaries);
     }
 
     public object Solve2(string input)
     {
-        var binaries = ProblemInput.ParseList(input);
+        var binaries = InputReader.ParseList(input);
         return LifeSupportRating(binaries);
     }
 

@@ -7,6 +7,7 @@ public static class MathUtils
 {
     /// <summary>
     /// Calculates the Manhattan distance between two points.
+    /// Manhattan distance = abs(x2-x1) + abs(y2-y1)
     /// </summary>
     /// <param name="a"></param>
     /// <param name="b"></param>

@@ -50,7 +50,7 @@
 
                 try
                 {
-                    problemInput = ProblemInput.ReadInput(year, problemNumber);
+                    problemInput = InputReader.ReadInput(year, problemNumber);
                 }
                 catch (FileNotFoundException f)
                 {
@@ -164,6 +164,13 @@
             }
         }
 
+        /// <summary>
+        /// Suggests a problem to solve. 
+        /// This uses a cache file to suggest the last executed problem.
+        /// If there is no cached suggestion, this suggests the newest implemented problem.
+        /// </summary>
+        /// <param name="problemTypes"></param>
+        /// <returns></returns>
         private static (int Year, int Number) GetInputSuggestion(List<(int Year, int Number, Type Type)> problemTypes)
         {
             // Check if we have a cache file.
@@ -179,7 +186,7 @@
 
                     var savedAt = new DateTime(long.Parse(parts[2]));
 
-                    if (DateTime.Now.AddMinutes(-5) < savedAt)
+                    if (DateTime.Now.AddMinutes(-15) < savedAt)
                     {
                         // Found cached (and non-expired) suggestion.
                         return (year, problemNumber);

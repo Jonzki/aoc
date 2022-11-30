@@ -40,6 +40,9 @@ namespace Aoc.Problems.Aoc20
 
         public object Solve2(string input)
         {
+            // The 2nd part runs into significant performance issues.
+            throw new NotImplementedException();
+
             input = "asd\n7,13,x,x,59,x,31,19";
 
             // The first line in your input is no longer relevant.
