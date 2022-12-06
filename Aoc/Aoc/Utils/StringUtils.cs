@@ -27,5 +27,14 @@
             }
             return output;
         }
+
+        /// <summary>
+        /// Parses the string into a number.
+        /// This is useful for method chaining.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static int ParseInt(this string input) => int.Parse(input);
+
     }
 }
