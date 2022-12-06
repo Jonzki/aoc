@@ -17,10 +17,8 @@ public class Problem01 : IProblem
     {
         var numbers = ParseNumbers(input);
 
-        var visited = new HashSet<int>();
-
         // Add the initial frequency of zero.
-        visited.Add(0);
+        var visited = new HashSet<int> { 0 };
 
         var resultingFrequency = 0;
         var run = true;
