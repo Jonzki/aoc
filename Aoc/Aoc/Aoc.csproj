@@ -144,7 +144,7 @@
     <None Update="Inputs\2022\2022.05.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Inputs\2022\2022.6.txt">
+    <None Update="Inputs\2022\2022.06.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

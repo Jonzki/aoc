@@ -5,6 +5,7 @@ namespace Aoc.Utils;
 
 /// <summary>
 /// Represents a 2D point in space.
+/// This is useful in many problems where we operate on a 2D map.
 /// </summary>
 [DebuggerDisplay("{DebuggerDisplay,nq}")]
 public class Point2D
@@ -53,9 +54,28 @@ public class Point2D
 
     #region Directional builders 
 
+    /// <summary>
+    /// Returns a point one step "left" of the current point.
+    /// </summary>
+    /// <returns></returns>
     public Point2D Left() => new(X - 1, Y);
+
+    /// <summary>
+    /// Returns a point one step "right" of the current point.
+    /// </summary>
+    /// <returns></returns>
     public Point2D Right() => new(X + 1, Y);
+
+    /// <summary>
+    /// Returns a point one step "up" of the current point.
+    /// </summary>
+    /// <returns></returns>
     public Point2D Up() => new(X, Y - 1);
+
+    /// <summary>
+    /// Returns a point one step "down" of the current point.
+    /// </summary>
+    /// <returns></returns>
     public Point2D Down() => new(X, Y + 1);
 
     #endregion
@@ -85,13 +105,16 @@ public class Point2D
 
     public override bool Equals(object obj)
     {
-        if (obj is Point2D point)
-        {
-            return point.X == X && point.Y == Y;
-        }
+        // Use the overloaded equals operator if the comparison object is also a Point2D.
+        if (obj is Point2D point) return this == point;
         return base.Equals(obj);
     }
 
+    /// <summary>
+    /// Returns a HashCode for the Point.
+    /// The Hash Code will be unique when using values under 10 000.
+    /// </summary>
+    /// <returns></returns>
     public override int GetHashCode()
     {
         return 10_000 * X + Y;

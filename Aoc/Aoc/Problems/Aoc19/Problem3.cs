@@ -30,7 +30,7 @@
             // Find crossings between the two paths. Ignore origin point.
             var crossings = GetCrossings(GetPath(path1), GetPath(path2)).Where(c => c != (0, 0));
 
-            var closestDistance = crossings.Select(c => MathUtils.ManhattanDistance(c, (0, 0))).OrderBy(d => d).FirstOrDefault();
+            var closestDistance = crossings.Select(c => NumberUtils.ManhattanDistance(c, (0, 0))).OrderBy(d => d).FirstOrDefault();
 
             return closestDistance;
         }

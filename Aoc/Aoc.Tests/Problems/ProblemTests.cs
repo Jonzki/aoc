@@ -14,11 +14,11 @@ namespace Aoc.Tests.Problems
     [TestClass]
     public abstract class ProblemTests<TProblem> where TProblem : IProblem, new()
     {
-        protected abstract string SmallInput { get; }
+        protected virtual string SmallInput { get; }
 
-        protected abstract object CorrectOutput1 { get; }
+        protected virtual object CorrectOutput1 { get; }
 
-        protected abstract object CorrectOutput2 { get; }
+        protected virtual object CorrectOutput2 { get; }
 
         protected void RunPart1(object correctOutput, string input)
         {

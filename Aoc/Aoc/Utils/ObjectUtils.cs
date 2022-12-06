@@ -1,7 +1,6 @@
-﻿namespace Aoc.Utils
+﻿namespace Aoc.Utils;
+
+public static class ObjectUtils
 {
-    public static class ObjectUtils
-    {
-        public static bool IsAnyOf<T>(this T obj, params T[] objects) => objects.Contains(obj);
-    }
+    public static bool IsAnyOf<T>(this T obj, params T[] objects) => objects.Contains(obj);
 }
