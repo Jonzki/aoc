@@ -11,7 +11,7 @@ namespace Aoc.Tests.Problems.Aoc22;
 [TestClass]
 public class Problem05Tests : ProblemTests<Problem05>
 {
-    protected override string SmallInput => @"    [D]    
+    private string SmallInput => @"    [D]    
 [N] [C]    
 [Z] [M] [P]
  1   2   3 
@@ -21,9 +21,9 @@ move 3 from 1 to 3
 move 2 from 2 to 1
 move 1 from 1 to 2";
 
-    protected override object CorrectOutput1 => "CMZ";
+    private object CorrectOutput1 => "CMZ";
 
-    protected override object CorrectOutput2 => "MCD";
+    private object CorrectOutput2 => "MCD";
 
     [TestMethod]
     public void Part1_SmallInput_Is_Correct() => RunPart1(CorrectOutput1, SmallInput);

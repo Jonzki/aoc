@@ -12,7 +12,7 @@ namespace Aoc.Tests.Problems.Aoc21;
 [TestClass]
 public class Problem14Tests : ProblemTests<Problem14>
 {
-    protected override string SmallInput => @"NNCB
+    private string SmallInput => @"NNCB
 
 CH -> B
 HH -> N
@@ -31,9 +31,9 @@ BC -> B
 CC -> N
 CN -> C";
 
-    protected override object CorrectOutput1 => 1588L;
+    private object CorrectOutput1 => 1588L;
 
-    protected override object CorrectOutput2 => 2188189693529L;
+    private object CorrectOutput2 => 2188189693529L;
 
     [TestMethod]
     public void Part1_SmallInput_Is_Correct() => RunPart1(CorrectOutput1, SmallInput);

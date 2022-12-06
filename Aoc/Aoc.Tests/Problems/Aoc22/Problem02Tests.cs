@@ -11,13 +11,13 @@ namespace Aoc.Tests.Problems.Aoc22;
 [TestClass]
 public class Problem02Tests : ProblemTests<Problem02>
 {
-    protected override string SmallInput => @"A Y
+    private string SmallInput => @"A Y
 B X
 C Z";
 
-    protected override object CorrectOutput1 => 15;
+    private object CorrectOutput1 => 15;
 
-    protected override object CorrectOutput2 => 12;
+    private object CorrectOutput2 => 12;
 
     [TestMethod]
     public void Part1_SmallInput_Is_Correct() => RunPart1(CorrectOutput1, SmallInput);

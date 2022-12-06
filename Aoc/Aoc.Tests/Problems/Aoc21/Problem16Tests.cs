@@ -12,11 +12,11 @@ namespace Aoc.Tests.Problems.Aoc21;
 [TestClass]
 public class Problem16Tests : ProblemTests<Problem16>
 {
-    protected override string SmallInput => "D2FE28";
+    private string SmallInput => "D2FE28";
 
-    protected override object CorrectOutput1 => 40;
+    private object CorrectOutput1 => 40;
 
-    protected override object CorrectOutput2 => 315;
+    private object CorrectOutput2 => 315;
 
     [DataTestMethod]
     [DataRow(6, "D2FE28")]

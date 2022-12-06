@@ -22,9 +22,9 @@ fguij
 axcye
 wvxyz";
 
-    protected override object CorrectOutput1 => 12;
+    private object CorrectOutput1 => 12;
 
-    protected override object CorrectOutput2 => "fgij";
+    private object CorrectOutput2 => "fgij";
 
     [TestMethod]
     public void Part1_SmallInput_Is_Correct() => RunPart1(CorrectOutput1, SmallInput1);

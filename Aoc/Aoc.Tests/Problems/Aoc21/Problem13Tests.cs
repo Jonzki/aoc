@@ -12,7 +12,7 @@ namespace Aoc.Tests.Problems.Aoc21;
 [TestClass]
 public class Problem13Tests : ProblemTests<Problem13>
 {
-    protected override string SmallInput => @"6,10
+    private string SmallInput => @"6,10
 0,14
 9,10
 0,3
@@ -34,9 +34,9 @@ public class Problem13Tests : ProblemTests<Problem13>
 fold along y=7
 fold along x=5";
 
-    protected override object CorrectOutput1 => 17;
+    private object CorrectOutput1 => 17;
 
-    protected override object CorrectOutput2 => 36;
+    private object CorrectOutput2 => 36;
 
     [TestMethod]
     public void Part1_SmallInput_Is_Correct() => RunPart1(CorrectOutput1, SmallInput);

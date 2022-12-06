@@ -14,12 +14,6 @@ namespace Aoc.Tests.Problems
     [TestClass]
     public abstract class ProblemTests<TProblem> where TProblem : IProblem, new()
     {
-        protected virtual string SmallInput { get; }
-
-        protected virtual object CorrectOutput1 { get; }
-
-        protected virtual object CorrectOutput2 { get; }
-
         protected void RunPart1(object correctOutput, string input)
         {
             var output = new TProblem().Solve1(input);

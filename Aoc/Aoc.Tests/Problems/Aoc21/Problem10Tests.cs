@@ -11,7 +11,7 @@ namespace Aoc.Tests.Problems.Aoc21;
 [TestClass]
 public class Problem10Tests : ProblemTests<Problem10>
 {
-    protected override string SmallInput => @"[({(<(())[]>[[{[]{<()<>>
+    private string SmallInput => @"[({(<(())[]>[[{[]{<()<>>
 [(()[<>])]({[<{<<[]>>(
 {([(<{}[<>[]}>{[]{[(<()>
 (((({<>}<{<{<>}{[]{[]{}
@@ -22,9 +22,9 @@ public class Problem10Tests : ProblemTests<Problem10>
 <{([([[(<>()){}]>(<<{{
 <{([{{}}[<[[[<>{}]]]>[]]";
 
-    protected override object CorrectOutput1 => 26397;
+    private object CorrectOutput1 => 26397;
 
-    protected override object CorrectOutput2 => 288957L;
+    private object CorrectOutput2 => 288957L;
 
     [TestMethod]
     public void Part1_SmallInput_Is_Correct() => RunPart1(CorrectOutput1, SmallInput);

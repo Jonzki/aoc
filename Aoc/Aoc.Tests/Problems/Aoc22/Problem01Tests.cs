@@ -6,7 +6,7 @@ namespace Aoc.Tests.Problems.Aoc22;
 [TestClass]
 public class Problem01Tests : ProblemTests<Problem01>
 {
-    protected override string SmallInput => @"1000
+    private string SmallInput => @"1000
 2000
 3000
 
@@ -21,9 +21,9 @@ public class Problem01Tests : ProblemTests<Problem01>
 
 10000";
 
-    protected override object CorrectOutput1 => 24000;
+    private object CorrectOutput1 => 24000;
 
-    protected override object CorrectOutput2 => 45000;
+    private object CorrectOutput2 => 45000;
 
     [TestMethod]
     public void Part1_SmallInput_Is_Correct() => RunPart1(CorrectOutput1, SmallInput);

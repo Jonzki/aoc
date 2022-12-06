@@ -12,7 +12,7 @@ namespace Aoc.Tests.Problems.Aoc21;
 [TestClass]
 public class Problem12Tests : ProblemTests<Problem12>
 {
-    protected override string SmallInput => @"start-A
+    private string SmallInput => @"start-A
 start-b
 A-c
 A-b
@@ -20,9 +20,9 @@ b-d
 A-end
 b-end";
 
-    protected override object CorrectOutput1 => 10;
+    private object CorrectOutput1 => 10;
 
-    protected override object CorrectOutput2 => 36;
+    private object CorrectOutput2 => 36;
 
     [TestMethod]
     public void Part1_SmallInput_Is_Correct() => RunPart1(CorrectOutput1, SmallInput);
