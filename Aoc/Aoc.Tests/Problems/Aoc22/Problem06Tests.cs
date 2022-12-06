@@ -1,22 +1,11 @@
 ﻿using Aoc.Problems.Aoc22;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Aoc.Tests.Problems.Aoc22;
 
 [TestClass]
 public class Problem06Tests : ProblemTests<Problem06>
 {
-    protected override string SmallInput => @"mjqjpqmgbljsphdztnvjfqwrcgsmlb";
-
-    protected override object CorrectOutput1 => 7;
-
-    protected override object CorrectOutput2 => "MCD";
-
     [DataTestMethod]
     [DataRow("mjqjpqmgbljsphdztnvjfqwrcgsmlb", 7)]
     [DataRow("bvwbjplbgvbhsrlpgdmjqwftvncz", 5)]

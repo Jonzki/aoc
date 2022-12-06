@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace Aoc.Utils;
 
@@ -35,5 +36,18 @@ public static class NumberUtils
 
     public static int ManhattanDistance(int x1, int y1, int x2, int y2) => Math.Abs(x2 - x1) + Math.Abs(y2 - y1);
 
+    /// <summary>
+    /// Calculates the Manhattan distance between two points.
+    /// Manhattan distance = abs(x2-x1) + abs(y2-y1)
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <returns></returns>
     public static int ManhattanDistance((int x, int y) a, (int x, int y) b) => ManhattanDistance(a.x, a.y, b.x, b.y);
+
+    public static decimal Average(params int[] numbers)
+    {
+        if (numbers.Length == 0) throw new ArgumentException("Must have at least one number in input.");
+        return numbers.Sum() / (decimal)numbers.Length;
+    }
 }

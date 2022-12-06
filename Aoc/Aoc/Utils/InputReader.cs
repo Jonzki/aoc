@@ -11,7 +11,8 @@ public static class InputReader
 {
     /// <summary>
     /// Returns the problem input for the given year and number.
-    /// The input file must be located under the Inputs directory, and be named "[year].[number].txt".
+    /// The input file must be located under the Inputs directory, 
+    /// and be named "[year].[number].txt" (number can be zero padded).
     /// </summary>
     /// <param name="year">Problem year</param>
     /// <param name="number">Problem number</param>
@@ -19,15 +20,20 @@ public static class InputReader
     /// <exception cref="FileNotFoundException">A File matching the </exception>
     public static string ReadInput(int year, int number)
     {
-        var fileName = $"{year}.{number}.txt";
+        // Find all input files.
         var allInputs = Directory.GetFiles("Inputs", "*.txt", SearchOption.AllDirectories);
 
-        var filePath = allInputs.FirstOrDefault(f => f.EndsWith("\\" + fileName));
+        // Two potential file names (support zero-padding).
+        var fileName1 = $"{year}.{number}.txt";
+        // Format :00 = zero-padded number of 2 digits (eg. 01).
+        var fileName2 = $"{year}.{number:00}.txt";
+
+        var filePath = allInputs.FirstOrDefault(f => f.EndsWith("\\" + fileName1) || f.EndsWith("\\" + fileName2));
         if (File.Exists(filePath))
         {
             return File.ReadAllText(filePath);
         }
-        throw new FileNotFoundException($"Input file {fileName} could not be found.", fileName);
+        throw new FileNotFoundException($"No input file found for year {year}, number {number}.");
     }
 
     public static string[] ParseList(string input, params string[] separators)
