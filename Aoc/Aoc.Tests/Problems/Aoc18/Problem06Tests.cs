@@ -15,11 +15,10 @@ public class Problem06Tests : ProblemTests<Problem06>
 
     private object CorrectOutput1 => 17;
 
-    private object CorrectOutput2 => 4;
-
     [TestMethod]
     public void Part1_SmallInput_Is_Correct() => RunPart1(CorrectOutput1, SmallInput);
 
-    [TestMethod]
-    public void Part2_SmallInput_Is_Correct() => RunPart2(CorrectOutput2, SmallInput);
+    // Inconclusive - this would need to be tested with a limit of 32, not 10 000.
+    //[TestMethod]
+    //public void Part2_SmallInput_Is_Correct() => RunPart2(CorrectOutput2, SmallInput);
 }
