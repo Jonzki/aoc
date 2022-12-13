@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Aoc.Problems.Aoc20;
 using Aoc.Utils;
 
 namespace Aoc.Problems.Aoc22;
@@ -29,16 +30,47 @@ public class Problem10 : IProblem
         };
 
         // Set up a computer.
-        var computer = new Computer(checkpoints);
+        var computer = new Computer(checkpoints, commands);
 
-        computer.Execute(commands);
+        // Run the entire program.
+        while (computer.HasCommands)
+        {
+            computer.Tick();
+        }
 
         return checkpoints.Select(kvp => kvp.Key * kvp.Value).Sum();
     }
 
     public object Solve2(string input)
     {
-        return 0;
+        // Parse commands.
+        var commands = ParseCommands(input);
+
+        // Set up a computer.
+        var computer = new Computer(null, commands);
+
+        // Run the computer for 6 * 40 cycles.
+        // This will print something.
+        var stringBuilder = new StringBuilder();
+        for (var y = 0; y < 6; ++y)
+        {
+            for (var x = 0; x < 40; ++x)
+            {
+                // Check if our X position is within 1 from the current X position.
+                var draw = Math.Abs(computer.RegisterX - (computer.Cycle % 40)) <= 1;
+
+
+                // Run a tick.
+                computer.Tick();
+
+
+                // Draw a lit or dark "pixel".
+                stringBuilder.Append(draw ? '#' : '.');
+            }
+            stringBuilder.AppendLine();
+        }
+
+        return stringBuilder.ToString().Trim();
     }
 
     private Queue<Command> ParseCommands(string input)
@@ -60,12 +92,13 @@ public class Problem10 : IProblem
 
     class Computer
     {
-        public Computer(Dictionary<int, int> checkpoints)
+        public Computer(Dictionary<int, int> checkpoints, Queue<Command> commands)
         {
             Cycle = 0;
             // The CPU has a single register, X, which starts with the value 1.
             RegisterX = 1;
-            RegisterXCheckpoints = checkpoints;
+            Checkpoints = checkpoints;
+            Commands = commands;
         }
 
         public int Cycle = 0;
@@ -75,31 +108,44 @@ public class Problem10 : IProblem
         /// <summary>
         /// Checkpoints for register X.
         /// </summary>
-        public Dictionary<int, int> RegisterXCheckpoints { get; set; }
+        public Dictionary<int, int> Checkpoints { get; set; }
+        public Queue<Command> Commands { get; set; }
 
-        /// <summary>
-        /// Executes a command.
-        /// </summary>
-        /// <param name="command"></param>
-        /// <param name="value"></param>
-        public void Execute(Queue<Command> commands)
+        public bool HasCommands => Commands.Count > 0 || CurrentCommand != null;
+
+        private Command CurrentCommand;
+        private int CurrentCommandDuration = 0;
+
+        public void Tick()
         {
-            while (commands.TryDequeue(out var command))
+            // Make sure we have a current command.
+            if (CurrentCommand == null && Commands.TryDequeue(out CurrentCommand))
             {
-                // Run through the cycles.
-                for (var i = 1; i <= command.Duration; ++i)
-                {
-                    Cycle++;
-                    if (RegisterXCheckpoints.ContainsKey(Cycle))
-                    {
-                        RegisterXCheckpoints[Cycle] = RegisterX;
-                    }
+                // Reset the command duration.
+                CurrentCommandDuration = 0;
+            }
+            // Exit if no commands left.
+            if (CurrentCommand == null) return;
 
-                    if (i == command.Duration && command.Identifier == "addx")
-                    {
-                        RegisterX += command.Value;
-                    }
+            // Increase the tick count.
+            Cycle++;
+            CurrentCommandDuration++;
+
+            if (Checkpoints?.ContainsKey(Cycle) == true)
+            {
+                Checkpoints[Cycle] = RegisterX;
+            }
+
+            if (CurrentCommandDuration >= CurrentCommand.Duration)
+            {
+                // Run the addx operation.
+                if (CurrentCommand.Identifier == "addx")
+                {
+                    RegisterX += CurrentCommand.Value;
                 }
+
+                // Clear out the current command - next cycle will dequeue a new command.
+                CurrentCommand = null;
             }
         }
     }

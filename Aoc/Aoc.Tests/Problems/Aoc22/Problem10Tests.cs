@@ -1,4 +1,5 @@
 ﻿using Aoc.Problems.Aoc22;
+using Aoc.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Aoc.Tests.Problems.Aoc22;
@@ -155,7 +156,12 @@ noop";
 
     const int CorrectOutput1 = 13140;
 
-    const int CorrectOutput2 = 1;
+    const string CorrectOutput2 = @"##..##..##..##..##..##..##..##..##..##..
+###...###...###...###...###...###...###.
+####....####....####....####....####....
+#####.....#####.....#####.....#####.....
+######......######......######......####
+#######.......#######.......#######.....";
 
     [TestMethod]
     public void Part1_SmallInput_Is_Correct() => RunPart1(CorrectOutput1, SmallInput);
