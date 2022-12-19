@@ -2,66 +2,63 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Aoc.Problems.Aoc20;
 using Aoc.Utils;
 
-namespace Aoc.Problems.Aoc21;
+namespace Aoc.Problems.Aoc22;
 
-public class Problem15 : IProblem
+/// <summary>
+/// https://adventofcode.com/2022/day/12
+/// </summary>
+public class Problem12 : IProblem
 {
-    public const string MiniInput = @"12
-11";
-
-    public const string MiniInput2 = @"123
-111
-321";
-
-
-    public const string MazeInput = @"19111
-19191
-11191";
-
-    public const string SmallInput = @"1163751742
-1381373672
-2136511328
-3694931569
-7463417111
-1319128137
-1359912421
-3125421639
-1293138521
-2311944581";
-
-
     public object Solve1(string input)
     {
-        var (nodes, width, height) = ParseMap1(input);
+        var map = ParseMap(input);
 
-        var risk = FindBestPathDijkstra(nodes);
+        var startNode = map.Nodes.First(n => n.Value == 'S');
 
-        return risk;
+        var totalCost = FindBestPathDijkstra(map.Nodes, startNode.Position);
+
+        return totalCost;
     }
 
     public object Solve2(string input)
     {
-        var (nodes, width, height) = ParseMap2(input);
+        var map = ParseMap(input);
 
-        var risk = FindBestPathDijkstra(nodes);
+        // For part 2, we have many potential starting nodes.
+        var startNodes = map.Nodes.Where(n => n.Value == 'a' || n.Value == 'S').ToList();
 
-        return risk;
+        var minDistance = int.MaxValue;
+
+        foreach (var startNode in startNodes)
+        {
+            var totalCost = FindBestPathDijkstra(map.Nodes, startNode.Position);
+            if (totalCost < minDistance)
+            {
+                minDistance = totalCost;
+            }
+        }
+
+        return minDistance;
     }
+
 
     /// <summary>
     /// Parses a map of Nodes from the problem input (Dijkstra approach).
     /// </summary>
     /// <param name="input"></param>
     /// <returns></returns>
-    public static (List<Node> Nodes, int Width, int Height) ParseMap1(string input)
+    public static (List<Node> Nodes, int Width, int Height) ParseMap(string input)
     {
         var lines = input.SplitLines();
         var width = lines[0].Length;
         var height = lines.Length;
 
-        var temp = lines.SelectMany(l => l.Select(c => (c - '0'))).ToArray();
+        var temp = lines.SelectMany(l => l.Select(c => c)).ToArray();
 
         var points = ArrayUtils.To2D(temp, width, height);
 
@@ -72,9 +69,9 @@ public class Problem15 : IProblem
             {
                 nodes.Add(new Node
                 {
-                    Position = new Point2D(x, y),
-                    Risk = points[y, x],
-                    RiskFromStart = 1_000_000_000,
+                    Position = (x, y),
+                    Value = points[y, x],
+                    StepsFromStart = 1_000_000_000,
                     Visited = false
                 });
             }
@@ -84,53 +81,11 @@ public class Problem15 : IProblem
     }
 
     /// <summary>
-    /// Parses a map of Nodes for part 2 of the problem.
+    /// Dijkstra's algorithm for pathfinding.
+    /// Adapted from 2021.15.
     /// </summary>
-    /// <param name="input"></param>
     /// <returns></returns>
-    public static (List<Node> Nodes, int Width, int Height) ParseMap2(string input)
-    {
-        var lines = input.SplitLines();
-        var width = lines[0].Length;
-        var height = lines.Length;
-
-        var temp = lines.SelectMany(l => l.Select(c => (c - '0'))).ToArray();
-
-        var points = ArrayUtils.To2D(temp, width, height);
-
-        var nodes = new List<Node>();
-
-        // Run a 5 times multiplier for the coordinates.
-        // This makes the map way larger.
-        for (var y = 0; y < height; y++)
-        {
-            for (var x = 0; x < width; x++)
-            {
-                for (int y2 = 0; y2 < 5; y2++)
-                {
-                    for (var x2 = 0; x2 < 5; x2++)
-                    {
-                        var riskValue = points[y, x] + x2 + y2;
-                        if (riskValue > 9) riskValue -= 9;
-
-                        nodes.Add(new Node
-                        {
-                            Position = new Point2D(x + x2 * width, y + y2 * height),
-                            Risk = riskValue,
-                            RiskFromStart = 1_000_000_000,
-                            Visited = false
-                        });
-                    }
-                }
-            }
-        }
-
-        nodes = nodes.OrderBy(n => n.Position.Y).ThenBy(n => n.Position.X).ToList();
-
-        return (nodes, width, height);
-    }
-
-    public static int FindBestPathDijkstra(List<Node> input)
+    public static int FindBestPathDijkstra(List<Node> input, Point2D startPosition)
     {
         // Resolve the end position first.
         var maxX = input.Max(n => n.Position.X);
@@ -139,31 +94,34 @@ public class Problem15 : IProblem
         var width = maxX + 1;
         var height = maxY + 1;
 
-        var endPosition = new Point2D(maxX, maxY);
-
         List<Node> visitedNodes = new List<Node>();
 
         // Construct a positional lookup (this leverages C# references).
         var nodeMap = new Node[height, width];
+
         // Also construct a priority queue
         var priorityMap = new SortedDictionary<int, List<Node>>();
 
         foreach (var node in input)
         {
             // Set the starting risk.
-            if (node.Position.PositionEquals(0, 0))
+            if (node.PositionEquals(startPosition))
             {
-                node.RiskFromStart = 0;
+                node.StepsFromStart = 0;
             }
 
-            nodeMap[node.Position.X, node.Position.Y] = node;
+            // Assign a positional shortcut.
+            nodeMap[node.Position.Y, node.Position.X] = node;
 
-            priorityMap.TryAdd(node.RiskFromStart, new List<Node>());
-            priorityMap[node.RiskFromStart].Add(node);
+            if (!priorityMap.ContainsKey(node.StepsFromStart))
+            {
+                priorityMap.Add(node.StepsFromStart, new List<Node>());
+            }
+            priorityMap[node.StepsFromStart].Add(node);
         }
 
         // Run until we reach the target.
-        Node currentNode;
+        Node currentNode = null;
         var i = 0;
         do
         {
@@ -185,22 +143,29 @@ public class Problem15 : IProblem
             foreach (var position in neighborPositions)
             {
                 // Calculate the risk value from start for the node.
-                var neighbor = nodeMap[position.X, position.Y];
+                var neighbor = nodeMap[position.Y, position.X];
 
-                var previousRisk = neighbor.RiskFromStart;
-                neighbor.RiskFromStart = Math.Min(neighbor.RiskFromStart, currentNode.RiskFromStart + neighbor.Risk);
-                if (previousRisk != neighbor.RiskFromStart)
+                // Check the elevation difference between the current position and the potential target.
+                // Skip if target is more than 1 unit higher.
+                var elevationDifference = neighbor.Elevation - currentNode.Elevation;
+                if (elevationDifference > 1)
+                {
+                    continue;
+                }
+
+                var previousStepsFromStart = neighbor.StepsFromStart;
+                neighbor.StepsFromStart = Math.Min(neighbor.StepsFromStart, currentNode.StepsFromStart + 1);
+                if (previousStepsFromStart != neighbor.StepsFromStart)
                 {
                     // Need to move the item from old risk to new.
-                    priorityMap[previousRisk].Remove(neighbor);
-                    if (priorityMap[previousRisk].Count == 0)
+                    priorityMap[previousStepsFromStart].Remove(neighbor);
+                    if (priorityMap[previousStepsFromStart].Count == 0)
                     {
-                        priorityMap.Remove(previousRisk);
+                        priorityMap.Remove(previousStepsFromStart);
                     }
 
-
-                    priorityMap.TryAdd(neighbor.RiskFromStart, new List<Node>());
-                    priorityMap[neighbor.RiskFromStart].Add(neighbor);
+                    priorityMap.TryAdd(neighbor.StepsFromStart, new List<Node>());
+                    priorityMap[neighbor.StepsFromStart].Add(neighbor);
                 }
             }
 
@@ -224,11 +189,18 @@ public class Problem15 : IProblem
         } while (currentNode != null);
 
         // Search complete. We should now have the smallest risk value as the "RiskFromStart" value of the final position.
-        var endNode = visitedNodes.FirstOrDefault(n => n.Position == endPosition);
+        var endNode = visitedNodes.FirstOrDefault(n => n.Value == 'E');
 
-        return endNode?.RiskFromStart ?? -1;
+        return endNode?.StepsFromStart ?? -1;
     }
 
+    /// <summary>
+    /// Returns neighboring positions for the input Position, clamped to within the input bounds.
+    /// </summary>
+    /// <param name="position"></param>
+    /// <param name="width"></param>
+    /// <param name="height"></param>
+    /// <returns></returns>
     public static Point2D[] FindNeighborPositions(Point2D position, int width, int height)
     {
         return new[]
@@ -244,9 +216,26 @@ public class Problem15 : IProblem
     {
         public Point2D Position { get; set; }
 
-        public int Risk { get; set; }
-        public int RiskFromStart { get; set; }
+        public char Value { get; set; }
+
+        /// <summary>
+        /// Returns the elevation value for the Node.
+        /// </summary>
+        public int Elevation => Value switch
+        {
+            'S' => 0,
+            'E' => 'z' - 'a',
+            _ => Value - 'a'
+        };
+
+        /// <summary>
+        /// Tracks the amount of steps that have to be taken from the start to get to this Node.
+        /// </summary>
+        public int StepsFromStart { get; set; }
 
         public bool Visited { get; set; }
+
+        public bool PositionEquals(Point2D position) => Position.Equals(position);
     }
+
 }
