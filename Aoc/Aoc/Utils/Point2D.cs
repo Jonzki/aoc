@@ -38,16 +38,6 @@ public class Point2D
 
     public static implicit operator (int, int)(Point2D point) => (point.X, point.Y);
 
-    public static bool operator ==(Point2D a, Point2D b)
-    {
-        return a.X == b.X && a.Y == b.Y;
-    }
-
-    public static bool operator !=(Point2D a, Point2D b)
-    {
-        return !(a == b);
-    }
-
     public static Point2D operator +(Point2D a, Point2D b) => new Point2D(a.X + b.X, a.Y + b.Y);
 
     public static Point2D operator -(Point2D a, Point2D b) => new Point2D(a.X + b.X, a.Y + b.Y);
@@ -103,10 +93,21 @@ public class Point2D
             && Y.BetweenInclusive(corner1.Y, corner2.Y);
     }
 
+    public bool PositionEquals(Point2D other)
+    {
+        if (other == null) return false;
+        return PositionEquals(other.X, other.Y);
+    }
+
+    public bool PositionEquals(int x, int y)
+    {
+        return X == x && Y == y;
+    }
+
     public override bool Equals(object obj)
     {
-        // Use the overloaded equals operator if the comparison object is also a Point2D.
-        if (obj is Point2D point) return this == point;
+        // Check for positional equality if the comparison object is also a Point2D.
+        if (obj is Point2D point) return PositionEquals(point);
         return base.Equals(obj);
     }
 
