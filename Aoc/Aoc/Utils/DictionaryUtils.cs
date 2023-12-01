@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Aoc.Utils;
+﻿namespace Aoc.Utils;
 
 public static class DictionaryUtils
 {

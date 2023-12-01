@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using Aoc.Utils;
+﻿using System.Diagnostics;
 
 namespace Aoc.Problems.Aoc22;
 

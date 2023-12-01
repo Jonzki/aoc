@@ -1,11 +1,4 @@
 ﻿using Aoc.Utils;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Aoc.Tests.Utils;
 
@@ -52,5 +45,4 @@ public class BitArrayUtilsTests
         segment = input.GetSegment(3, 3);
         CollectionAssert.AreEqual(correctOutput, segment);
     }
-
 }

@@ -1,7 +1,4 @@
-﻿using Aoc.Utils;
-using System;
-
-namespace Aoc.Problems.Aoc20
+﻿namespace Aoc.Problems.Aoc20
 {
     public class Problem3 : IProblem
     {

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Aoc.Utils;
+﻿namespace Aoc.Utils;
 
 public static class ArrayUtils
 {

@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Aoc.Problems.Aoc20;
-using Aoc.Utils;
-
-namespace Aoc.Problems.Aoc22;
+﻿namespace Aoc.Problems.Aoc22;
 
 /// <summary>
 /// https://adventofcode.com/2022/day/12

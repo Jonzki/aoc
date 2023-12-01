@@ -1,5 +1,4 @@
 ﻿using Aoc.Problems.Aoc20;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static Aoc.Problems.Aoc20.Problem2;
 
 namespace Aoc.Tests.Problems.Aoc20

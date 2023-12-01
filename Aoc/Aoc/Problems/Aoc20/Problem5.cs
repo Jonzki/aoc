@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-
-namespace Aoc.Problems.Aoc20
+﻿namespace Aoc.Problems.Aoc20
 {
     public class Problem5 : IProblem
     {

@@ -1,6 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-namespace Aoc.Tests.Problems;
+﻿namespace Aoc.Tests.Problems;
 
 /// <summary>
 /// Base class for defining small input tests for parts 1 and 2 of a Problem.

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Aoc.Utils;
+﻿using System.Text;
 
 namespace Aoc.Problems.Aoc18;
 

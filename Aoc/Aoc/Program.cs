@@ -1,6 +1,4 @@
-﻿global using Aoc.Utils;
-
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("Aoc.Tests")]
 

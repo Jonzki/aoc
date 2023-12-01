@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Aoc.Utils;
-
-namespace Aoc.Problems.Aoc18;
+﻿namespace Aoc.Problems.Aoc18;
 
 public class Problem01 : IProblem
 {

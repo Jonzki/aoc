@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using Aoc.Utils;
-
-namespace Aoc.Problems.Aoc21;
+﻿namespace Aoc.Problems.Aoc21;
 
 public class Problem15 : IProblem
 {

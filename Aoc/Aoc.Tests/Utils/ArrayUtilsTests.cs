@@ -1,5 +1,4 @@
 ﻿using Aoc.Utils;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Aoc.Tests.Utils
 {

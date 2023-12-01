@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-
-namespace Aoc.Utils;
+﻿namespace Aoc.Utils;
 
 public static class NumberUtils
 {

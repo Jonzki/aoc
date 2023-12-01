@@ -1,6 +1,4 @@
-﻿using System.Buffers;
-
-namespace Aoc.Problems.Aoc23;
+﻿namespace Aoc.Problems.Aoc23;
 
 public class Problem01 : IProblem
 {

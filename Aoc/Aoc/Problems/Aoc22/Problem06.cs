@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace Aoc.Problems.Aoc22;
+﻿namespace Aoc.Problems.Aoc22;
 
 public class Problem06 : IProblem
 {

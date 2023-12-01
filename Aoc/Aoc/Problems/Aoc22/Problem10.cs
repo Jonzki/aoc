@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Aoc.Problems.Aoc20;
-using Aoc.Utils;
+﻿using System.Text;
 
 namespace Aoc.Problems.Aoc22;
 
