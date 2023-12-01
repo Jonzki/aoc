@@ -5,7 +5,7 @@ namespace Aoc.Tests.Problems.Aoc22;
 [TestClass]
 public class Problem11Tests : ProblemTests<Problem11>
 {
-    const string SmallInput = @"Monkey 0:
+    private const string SmallInput = @"Monkey 0:
   Starting items: 79, 98
   Operation: new = old * 19
   Test: divisible by 23
@@ -33,9 +33,9 @@ Monkey 3:
     If true: throw to monkey 0
     If false: throw to monkey 1";
 
-    const long CorrectOutput1 = 10605;
+    private const long CorrectOutput1 = 10605;
 
-    const long CorrectOutput2 = 2713310158;
+    private const long CorrectOutput2 = 2713310158;
 
     [TestMethod]
     public void Part1_SmallInput_Is_Correct() => RunPart1(CorrectOutput1, SmallInput);
@@ -59,12 +59,11 @@ Monkey 3:
         var monkey = Problem11.Monkey.Parse(input);
 
         Assert.AreEqual(9, monkey.Id);
-        CollectionAssert.AreEqual(new int[] { 79, 98 }, monkey.Items);
+        CollectionAssert.AreEqual(new long[] { 79, 98 }, monkey.Items);
 
         Assert.IsNull(monkey.OperatorLeft);
         Assert.AreEqual('*', monkey.Operator);
         Assert.AreEqual(19, monkey.OperatorRight);
-
 
         Assert.AreEqual(23, monkey.TestValue);
 

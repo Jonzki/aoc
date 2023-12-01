@@ -51,5 +51,4 @@ public class Problem15Tests : ProblemTests<Problem15>
             Assert.AreEqual(correctValue, node.Risk);
         }
     }
-
 }

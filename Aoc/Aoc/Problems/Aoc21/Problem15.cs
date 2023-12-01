@@ -1,14 +1,21 @@
-﻿namespace Aoc.Problems.Aoc21;
+﻿using System.Diagnostics;
+
+namespace Aoc.Problems.Aoc21;
 
 public class Problem15 : IProblem
 {
+    /// <summary>
+    /// Lowest risk path = 2
+    /// </summary>
     public const string MiniInput = @"12
 11";
 
+    /// <summary>
+    /// Lowest risk = 3
+    /// </summary>
     public const string MiniInput2 = @"123
 111
 321";
-
 
     public const string MazeInput = @"19111
 19191
@@ -24,7 +31,6 @@ public class Problem15 : IProblem
 3125421639
 1293138521
 2311944581";
-
 
     public object Solve1(string input)
     {
@@ -150,6 +156,7 @@ public class Problem15 : IProblem
                 node.RiskFromStart = 0;
             }
 
+            // Save a reference to the nodeMap.
             nodeMap[node.Position.X, node.Position.Y] = node;
 
             priorityMap.TryAdd(node.RiskFromStart, new List<Node>());
@@ -157,7 +164,7 @@ public class Problem15 : IProblem
         }
 
         // Run until we reach the target.
-        Node currentNode;
+        Node? currentNode;
         var i = 0;
         do
         {
@@ -167,7 +174,7 @@ public class Problem15 : IProblem
             // Find an unvisited node with the smallest risk value. Add a large value when sorting to push visited nodes to the back.
             var minPrio = priorityMap.First();
             // Since the risk value is the same in this pool, we should be safe to pick the last item.
-            currentNode = minPrio.Value.Last();
+            currentNode = minPrio.Value.LastOrDefault();
             if (currentNode == null)
             {
                 // Stop if no unvisited nodes could be found.
@@ -191,7 +198,6 @@ public class Problem15 : IProblem
                     {
                         priorityMap.Remove(previousRisk);
                     }
-
 
                     priorityMap.TryAdd(neighbor.RiskFromStart, new List<Node>());
                     priorityMap[neighbor.RiskFromStart].Add(neighbor);
@@ -218,7 +224,7 @@ public class Problem15 : IProblem
         } while (currentNode != null);
 
         // Search complete. We should now have the smallest risk value as the "RiskFromStart" value of the final position.
-        var endNode = visitedNodes.FirstOrDefault(n => n.Position == endPosition);
+        var endNode = visitedNodes.FirstOrDefault(n => n.Position.Equals(endPosition));
 
         return endNode?.RiskFromStart ?? -1;
     }
@@ -234,6 +240,7 @@ public class Problem15 : IProblem
         }.Where(p => p.IsInBounds(width, height)).ToArray();
     }
 
+    [DebuggerDisplay("{DebuggerDisplay,nq}")]
     public class Node
     {
         public Point2D Position { get; set; }
@@ -242,5 +249,7 @@ public class Problem15 : IProblem
         public int RiskFromStart { get; set; }
 
         public bool Visited { get; set; }
+
+        private string DebuggerDisplay => $"{Position};{Risk};{RiskFromStart};{(Visited ? 'V' : '_')}";
     }
 }

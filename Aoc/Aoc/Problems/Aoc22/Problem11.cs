@@ -17,7 +17,7 @@ public class Problem11 : IProblem
             // The monkeys take turns inspecting and throwing items.
             for (var m = 0; m < monkeys.Count; ++m)
             {
-                Inspect(monkeys, m, true);
+                Inspect1(monkeys, m);
             }
         }
 
@@ -32,13 +32,21 @@ public class Problem11 : IProblem
     {
         var monkeys = Monkey.ParseMany(input);
 
+        int commonProduct = 1;
+        foreach (var monkey in monkeys)
+        {
+            commonProduct *= monkey.TestValue;
+        }
+
+        var commonDivider = monkeys.Select(m => m.TestValue).Aggregate((current, value) => current * value);
+
         // Now we're running 10 000 rounds instead of 20.
         for (var round = 1; round <= 10_000; ++round)
         {
             // The monkeys take turns inspecting and throwing items.
             for (var m = 0; m < monkeys.Count; ++m)
             {
-                Inspect(monkeys, m, false);
+                Inspect2(monkeys, m, commonProduct);
             }
 
             if (round == 1 || round == 20 || round % 1000 == 0)
@@ -59,8 +67,7 @@ public class Problem11 : IProblem
     /// </summary>
     /// <param name="monkeys"></param>
     /// <param name="index"></param>
-    /// <param name="divide">If true, applies the part1 division (by 3).</param>
-    public void Inspect(List<Monkey> monkeys, int index, bool divide)
+    public void Inspect1(List<Monkey> monkeys, int index)
     {
         var monkey = monkeys[index];
 
@@ -72,11 +79,8 @@ public class Problem11 : IProblem
             // Test: can we focus on only the most significant numbers?
             monkey.Items[i] = monkey.InspectItem(monkey.Items[i]);
 
-            if (divide)
-            {
-                // Divide by 3.
-                monkey.Items[i] /= 3;
-            }
+            // "Monkey gets bored with the item", divide by 3.
+            monkey.Items[i] /= 3;
 
             // Check which monkey to throw to.
             var throwTo = monkey.ThrowItem(monkey.Items[i]);
@@ -86,7 +90,35 @@ public class Problem11 : IProblem
         }
 
         // Since we throw all items, we can clear the items last from this Monkey.
-        monkey.Items = new List<long>();
+        monkey.Items.Clear();
+    }
+
+    public void Inspect2(List<Monkey> monkeys, int index, int commonProduct)
+    {
+        var monkey = monkeys[index];
+
+        // On a single monkey's turn, it inspects and throws all of the items
+        // it is holding one at a time and in the order listed.
+        for (var i = 0; i < monkey.Items.Count; i++)
+        {
+            // Apply inspect function.
+            // Test: can we focus on only the most significant numbers?
+            monkey.Items[i] = monkey.InspectItem(monkey.Items[i]);
+
+            // Worry level only affects which monkey to throw to,
+            // and this is checked by divisibility.
+            // Reducing worry level by the test amount does not affect this.
+            monkey.Items[i] %= commonProduct;
+
+            // Check which monkey to throw to.
+            var throwTo = monkey.ThrowItem(monkey.Items[i]);
+
+            // Actually throw.
+            monkeys[throwTo].Items.Add(monkey.Items[i]);
+        }
+
+        // Since we throw all items, we can clear the items last from this Monkey.
+        monkey.Items.Clear();
     }
 
     private void PrintInspects(List<Monkey> monkeys, int round)
@@ -100,8 +132,14 @@ public class Problem11 : IProblem
 
     public class Monkey
     {
+        /// <summary>
+        /// Monkey ID.
+        /// </summary>
         public int Id { get; set; }
 
+        /// <summary>
+        /// Worry level for each of the Items the monkey is holding.
+        /// </summary>
         public List<long> Items { get; set; } = new();
 
         public char Operator { get; set; }
@@ -192,7 +230,5 @@ public class Problem11 : IProblem
         {
             return (item % TestValue == 0) ? TrueMonkey : FalseMonkey;
         }
-
     }
-
 }

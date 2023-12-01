@@ -18,7 +18,7 @@ public class Problem5 : IProblem
             {
                 Points.Add((start.X + i * dir.X, start.Y + i * dir.Y));
 
-                if (Points.Last() == end) break;
+                if (Points.Last().Equals(end)) break;
             }
         }
 
@@ -36,7 +36,7 @@ public class Problem5 : IProblem
 
         // "you need to determine the number of points where at least two lines overlap."
         var points = lines.SelectMany(line => line.Points).ToArray(); // Select every point from all lines.
-        var groups = points.GroupBy(p => p.ToString()).ToDictionary(g => g.Key, g => g.Count()); // Group same points together.  
+        var groups = points.GroupBy(p => p.ToString()).ToDictionary(g => g.Key, g => g.Count()); // Group same points together.
         var overlaps = groups.Count(x => x.Value > 1); // Count overlaps (multiples of same point).
 
         return overlaps;
@@ -51,7 +51,7 @@ public class Problem5 : IProblem
 
         // "you need to determine the number of points where at least two lines overlap."
         var points = lines.SelectMany(line => line.Points).ToArray(); // Select every point from all lines.
-        var groups = points.GroupBy(p => p.ToString()).ToDictionary(g => g.Key, g => g.Count()); // Group same points together.  
+        var groups = points.GroupBy(p => p.ToString()).ToDictionary(g => g.Key, g => g.Count()); // Group same points together.
         var overlaps = groups.Count(x => x.Value > 1); // Count overlaps (multiples of same point).
 
         return overlaps;
@@ -114,6 +114,5 @@ public class Problem5 : IProblem
             }
             Console.WriteLine("");
         }
-
     }
 }
