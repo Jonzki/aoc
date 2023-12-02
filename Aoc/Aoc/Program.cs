@@ -16,6 +16,8 @@ internal class Program
 
     private static void Main(string[] args)
     {
+        Console.Clear();
+
         // Sort available problem types descending, newest first.
         var problemTypes = GetProblemTypes().OrderByDescending(x => x.Year).ThenByDescending(x => x.Number).ToList();
 

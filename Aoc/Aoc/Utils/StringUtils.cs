@@ -27,5 +27,7 @@
             }
             return output;
         }
+
+        public static string RemoveAll(this string input, char character) => RemoveString(input, character.ToString());
     }
 }

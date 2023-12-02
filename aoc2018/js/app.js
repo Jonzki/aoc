@@ -22,4 +22,4 @@ const solve = number => {
     }
 };
 
-solve(9);
+solve(5);
