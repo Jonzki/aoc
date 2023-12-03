@@ -7,10 +7,10 @@ namespace Aoc.Utils;
 /// This is useful in many problems where we operate on a 2D map.
 /// </summary>
 [DebuggerDisplay("{DebuggerDisplay,nq}")]
-public class Point2D
+public struct Point2D
 {
-    public int X { get; set; }
-    public int Y { get; set; }
+    public int X;
+    public int Y;
 
     public Point2D(int x, int y)
     {
@@ -41,7 +41,7 @@ public class Point2D
 
     public static Point2D operator -(Point2D a, Point2D b) => new Point2D(a.X + b.X, a.Y + b.Y);
 
-    #region Directional builders 
+    #region Directional builders
 
     /// <summary>
     /// Returns a point one step "left" of the current point.
@@ -67,7 +67,7 @@ public class Point2D
     /// <returns></returns>
     public Point2D Down() => new(X, Y + 1);
 
-    #endregion
+    #endregion Directional builders
 
     /// <summary>
     /// Returns true if the point is in given boundaries, false otherwise.
@@ -94,7 +94,6 @@ public class Point2D
 
     public bool PositionEquals(Point2D other)
     {
-        if (other == null) return false;
         return PositionEquals(other.X, other.Y);
     }
 
@@ -103,11 +102,19 @@ public class Point2D
         return X == x && Y == y;
     }
 
-    public override bool Equals(object obj)
+    public bool Equals(Point2D other)
     {
-        // Check for positional equality if the comparison object is also a Point2D.
-        if (obj is Point2D point) return PositionEquals(point);
-        return base.Equals(obj);
+        return PositionEquals(other);
+    }
+
+    public bool Equals(int x, int y)
+    {
+        return PositionEquals(x, y);
+    }
+
+    public bool Equals((int X, int Y) other)
+    {
+        return PositionEquals(other.X, other.Y);
     }
 
     /// <summary>

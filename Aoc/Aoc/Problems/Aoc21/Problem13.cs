@@ -34,17 +34,22 @@ public class Problem13 : IProblem
     private List<Point2D> Fold(List<Point2D> points, Point2D fold)
     {
         // Move all points past the fold line.
-        foreach (var point in points)
+        for (var i = 0; i < points.Count; ++i)
         {
-            if (fold.X >= 0 && point.X > fold.X)
+            var newX = points[i].X;
+            var newY = points[i].Y;
+
+            if (fold.X >= 0 && newX > fold.X)
             {
-                // Move the point left by given amount. 
-                point.X -= (2 * Math.Abs(point.X - fold.X));
+                // Move the point left by given amount.
+                newX -= (2 * Math.Abs(newX - fold.X));
             }
-            else if (fold.Y >= 0 && point.Y > fold.Y)
+            else if (fold.Y >= 0 && newY > fold.Y)
             {
-                point.Y -= (2 * Math.Abs(point.Y - fold.Y));
+                newY -= (2 * Math.Abs(newY - fold.Y));
             }
+
+            points[i] = new Point2D(newX, newY);
         }
 
         // Remove duplicate points.

@@ -149,9 +149,9 @@ public class Problem17 : IProblem
 
     public class Probe
     {
-        public Point2D Velocity { get; set; }
+        public Point2D Velocity;
 
-        public Point2D Position { get; set; }
+        public Point2D Position;
 
         public int MaxHeight { get; set; } = 0;
 

@@ -61,13 +61,12 @@ public class Problem03 : IProblem
         return counts;
     }
 
-
-    class Claim
+    private class Claim
     {
-        public int Id { get; set; }
-        public Point2D Position { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
+        public int Id { get; private init; }
+        public Point2D Position { get; private init; }
+        public int Width { get; private init; }
+        public int Height { get; private init; }
 
         public static Claim Parse(string input)
         {
@@ -86,5 +85,4 @@ public class Problem03 : IProblem
             };
         }
     }
-
 }
