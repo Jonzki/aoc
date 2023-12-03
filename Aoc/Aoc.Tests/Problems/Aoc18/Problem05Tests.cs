@@ -1,5 +1,4 @@
-﻿using System;
-using Aoc.Problems.Aoc18;
+﻿using Aoc.Problems.Aoc18;
 
 namespace Aoc.Tests.Problems.Aoc18;
 

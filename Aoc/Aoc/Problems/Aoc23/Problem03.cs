@@ -1,6 +1,4 @@
-﻿using static System.Runtime.InteropServices.JavaScript.JSType;
-
-namespace Aoc.Problems.Aoc23;
+﻿namespace Aoc.Problems.Aoc23;
 
 public class Problem03 : IProblem
 {

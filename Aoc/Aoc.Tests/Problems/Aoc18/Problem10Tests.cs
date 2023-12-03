@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Aoc.Problems.Aoc18;
+﻿using Aoc.Problems.Aoc18;
 
 namespace Aoc.Tests.Problems.Aoc18;
 
