@@ -14,19 +14,19 @@ public class Problem04 : IProblem
 
     public object Solve2(string input)
     {
-        // Organize the cards into a queue.
-        var cards = new Queue<Card>(
-            input.SplitLines().Select(Card.Parse)
-        ).ToDictionary(c => c.Id);
+        var cards = input
+            .SplitLines()
+            .Select(Card.Parse)
+            .ToArray();
 
-        var totalCards = cards.Count;
+        var totalCards = cards.Length;
 
-        var cardQueue = new Queue<byte>(cards.Keys);
+        var cardQueue = new Queue<byte>(cards.Select(c => c.Id));
 
         while (cardQueue.TryDequeue(out var id))
         {
             // Get the winning cards for the current card.
-            var winningCards = cards[id].GetWinningCards();
+            var winningCards = cards[id - 1].GetWinningCards();
 
             // Increase total amount of cards we have.
             totalCards += winningCards.Length;
