@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace Aoc.Utils;
+﻿namespace Aoc.Utils;
 
 /// <summary>
 /// Represents a 2D point in space.

@@ -2,9 +2,7 @@
 
 namespace Aoc.Utils;
 
-using System;
 using System.IO;
-using System.Linq;
 
 /// <summary>
 /// Helper class for reading problem inputs.

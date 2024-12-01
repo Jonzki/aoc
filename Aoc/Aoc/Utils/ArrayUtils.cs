@@ -115,6 +115,7 @@ public static class ArrayUtils
     public static bool TryGet<T>(this T[,] array, int x, int y, out T value)
     {
         value = default;
+
         if (x < 0 || x >= array.Width()) return false;
         if (y < 0 || y >= array.Height()) return false;
 

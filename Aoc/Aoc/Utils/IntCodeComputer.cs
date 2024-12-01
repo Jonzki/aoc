@@ -1,9 +1,5 @@
 ﻿namespace Aoc.Utils
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-
     public class IntCodeComputer
     {
         public IntCodeComputer(IEnumerable<long> program)
@@ -26,7 +22,7 @@
         /// </summary>
         private long[] OriginalProgram { get; }
 
-        private long[] _executionMemory = null;
+        private long[]? _executionMemory = null;
 
         /// <summary>
         /// Returns the full output array of the program.

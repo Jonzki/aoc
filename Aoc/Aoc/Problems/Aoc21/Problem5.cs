@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace Aoc.Problems.Aoc21;
+﻿namespace Aoc.Problems.Aoc21;
 
 public class Problem5 : IProblem
 {

@@ -1,9 +1,5 @@
 ﻿namespace Aoc.Problems.Aoc19
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-
     public class Problem6 : IProblem
     {
         public object Solve1(string input)

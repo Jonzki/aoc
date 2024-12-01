@@ -1,6 +1,4 @@
-﻿using System.Text;
-
-namespace Aoc.Problems.Aoc22;
+﻿namespace Aoc.Problems.Aoc22;
 
 public class Problem05 : IProblem
 {

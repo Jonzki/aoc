@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace Aoc.Problems.Aoc18;
+﻿namespace Aoc.Problems.Aoc18;
 
 /// <summary>
 /// https://adventofcode.com/2018/day/9

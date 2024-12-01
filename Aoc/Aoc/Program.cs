@@ -4,11 +4,7 @@
 
 namespace Aoc;
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 
 internal class Program
 {
@@ -21,8 +17,8 @@ internal class Program
         // Sort available problem types descending, newest first.
         var problemTypes = GetProblemTypes().OrderByDescending(x => x.Year).ThenByDescending(x => x.Number).ToList();
 
-        IProblem problem = null;
-        string problemInput = null;
+        IProblem? problem = null;
+        string problemInput = string.Empty;
 
         while (problem == null)
         {
@@ -35,6 +31,11 @@ internal class Program
                 if (type != null)
                 {
                     problem = Activator.CreateInstance(type) as IProblem;
+                    if (problem == null)
+                    {
+                        Console.WriteLine($"Failed to get a non-null solver for {year}.{problemNumber}.");
+                        continue;
+                    }
                 }
                 else
                 {
@@ -48,6 +49,7 @@ internal class Program
                 Console.WriteLine($"Failed to create solver for Problem {problemNumber}:");
                 Console.WriteLine(ex.Message);
                 problem = null;
+                continue;
             }
 
             // Solver found & constructed - cache the input.
@@ -117,7 +119,7 @@ internal class Program
         foreach (var type in problemTypes)
         {
             // Eg. Aoc.Problems.Aoc20.Problem1.
-            var ns = type.Namespace.Split('.');
+            var ns = type.Namespace!.Split('.');
 
             // Year can be dug from Aoc20, index 2.
             var year = int.Parse(ns[2].Replace("Aoc", "")) + 2000;

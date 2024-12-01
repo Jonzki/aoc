@@ -1,6 +1,4 @@
-﻿using System.Data.SqlTypes;
-
-namespace Aoc
+﻿namespace Aoc
 {
     public interface IProblem
     {
@@ -8,7 +6,6 @@ namespace Aoc
         /// Returns a custom input file name to read.
         /// If this returns null, the program will default to returning the standard input.
         /// </summary>
-        /// <param name="part">Problem part to solve (1/2)</param>
         /// <returns></returns>
         string? ReadInput() => null;
 

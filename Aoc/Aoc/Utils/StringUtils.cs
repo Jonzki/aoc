@@ -16,7 +16,7 @@
         /// Removes all occurrences of input texts from the string.
         /// </summary>
         /// <param name="input"></param>
-        /// <param name="textToRemove"></param>
+        /// <param name="textsToRemove"></param>
         /// <returns></returns>
         public static string RemoveStrings(this string input, params string[] textsToRemove)
         {

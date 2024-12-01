@@ -1,6 +1,4 @@
-﻿using System.Text;
-
-namespace Aoc.Problems.Aoc22;
+﻿namespace Aoc.Problems.Aoc22;
 
 /// <summary>
 /// https://adventofcode.com/2022/day/10
