@@ -55,7 +55,7 @@ internal class Program
 
             try
             {
-                problemInput = InputReader.ReadInput(year, problemNumber);
+                problemInput = problem.ReadInput() ?? InputReader.ReadInput(year, problemNumber);
             }
             catch (FileNotFoundException f)
             {

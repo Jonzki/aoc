@@ -1,4 +1,6 @@
-﻿namespace Aoc.Utils;
+﻿using System.Text.RegularExpressions;
+
+namespace Aoc.Utils;
 
 using System;
 using System.IO;
@@ -11,28 +13,38 @@ public static class InputReader
 {
     /// <summary>
     /// Returns the problem input for the given year and number.
-    /// The input file must be located under the Inputs directory, 
-    /// and be named "[year].[number].txt" (number can be zero padded).
+    /// The input file must be located under the Inputs directory,
+    /// and be named "[year].[number](.[modifier]).txt" (number can be zero padded).
     /// </summary>
     /// <param name="year">Problem year</param>
     /// <param name="number">Problem number</param>
+    /// <param name="modifier">Optional modifier name for the input, typically "small"</param>
     /// <returns></returns>
     /// <exception cref="FileNotFoundException">A File matching the </exception>
-    public static string ReadInput(int year, int number)
+    public static string ReadInput(int year, int number, string? modifier = null)
     {
         // Find all input files.
         var allInputs = Directory.GetFiles("Inputs", "*.txt", SearchOption.AllDirectories);
 
-        // Two potential file names (support zero-padding).
-        var fileName1 = $"{year}.{number}.txt";
-        // Format :00 = zero-padded number of 2 digits (eg. 01).
-        var fileName2 = $"{year}.{number:00}.txt";
-
-        var filePath = allInputs.FirstOrDefault(f => f.EndsWith("\\" + fileName1) || f.EndsWith("\\" + fileName2));
-        if (File.Exists(filePath))
+        // Regex pattern for locating file "002024.0012.modifier.txt"
+        var pattern = $@"0*{year}\.0*{number}";
+        if (modifier != null)
         {
-            return File.ReadAllText(filePath);
+            pattern += $@"\.{modifier}";
         }
+        pattern += @"\.txt";
+
+        foreach (var input in allInputs)
+        {
+            // Grab the last path segment.
+            var fileName = input.Substring(input.LastIndexOf("\\"));
+            var match = Regex.Match(fileName, pattern);
+            if (match.Success)
+            {
+                return File.ReadAllText(input);
+            }
+        }
+
         throw new FileNotFoundException($"No input file found for year {year}, number {number}.");
     }
 
