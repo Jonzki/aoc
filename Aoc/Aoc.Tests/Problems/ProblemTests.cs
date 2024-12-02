@@ -19,11 +19,18 @@ public abstract class ProblemTests<TProblem> where TProblem : IProblem, new()
     {
         var output = new TProblem().Solve1(input);
 
+        // If the assertion and output types are both int or long, compare both as long.
+        if (output is int or long && correctOutput is int or long)
+        {
+            output.As<long>().Should().Be(correctOutput.As<long>());
+            return;
+        }
+
         // Check for type equality first (typically int vs. long).
-        Assert.AreEqual(correctOutputType.FullName, output.GetType().FullName, "The Types of expected and actual outputs must match.");
+        output.GetType().FullName.Should().Be(correctOutputType.FullName, "the Types of expected and actual outputs must match.");
 
         // Then proceed with normal equality check.
-        Assert.AreEqual(correctOutput, output);
+        output.Should().Be(correctOutput);
     }
 
     protected void RunPart2(object correctOutput, string input)
@@ -36,10 +43,17 @@ public abstract class ProblemTests<TProblem> where TProblem : IProblem, new()
     {
         var output = new TProblem().Solve2(input);
 
+        // If the assertion and output types are both int or long, compare both as long.
+        if (output is int or long && correctOutput is int or long)
+        {
+            output.As<long>().Should().Be(correctOutput.As<long>());
+            return;
+        }
+
         // Check for type equality first (typically int vs. long).
-        Assert.AreEqual(correctOutputType.FullName, output.GetType().FullName, "The Types of expected and actual outputs must match.");
+        output.GetType().FullName.Should().Be(correctOutputType.FullName, "the Types of expected and actual outputs must match.");
 
         // Then proceed with normal equality check.
-        Assert.AreEqual(correctOutput, output);
+        output.Should().Be(correctOutput);
     }
 }

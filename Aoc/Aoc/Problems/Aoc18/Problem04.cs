@@ -12,6 +12,11 @@ public class Problem04 : IProblem
     {
         var (events, guards) = ParseInput(input);
 
+        if (guards.Count == 0 || events.Count == 0)
+        {
+            return 0;
+        }
+
         // First event is a "begins shift" which we can ignore.
         for (var i = 1; i < events.Count; ++i)
         {
@@ -29,7 +34,7 @@ public class Problem04 : IProblem
         }
 
         var mostSleepyGuard = guards.Values.MaxBy(g => g.TotalMinutesAsleep);
-        var mostSleptMinute = mostSleepyGuard.SleepMinutes.MaxBy(x => x.Value).Key;
+        var mostSleptMinute = mostSleepyGuard!.SleepMinutes.MaxBy(x => x.Value).Key;
 
         return mostSleepyGuard.Id * mostSleptMinute;
     }
