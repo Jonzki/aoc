@@ -27,8 +27,8 @@
         /// Returns the minimum number of orbit transfers to make nodeA orbit the same parent as nodeB
         /// </summary>
         /// <param name="inputArray"></param>
-        /// <param name="nodeA"></param>
-        /// <param name="nodeB"></param>
+        /// <param name="node"></param>
+        /// <param name="target"></param>
         /// <returns></returns>
         public static int GetMinimumTransfer(string[] inputArray, string node, string target)
         {
@@ -42,7 +42,7 @@
             // Reverse both orbits, remove all common parents.
             nodeOrbit.Reverse();
             targetOrbit.Reverse();
-            string lastParent = null;
+            string? lastParent = null;
             while (nodeOrbit.Count > 0 && targetOrbit.Count > 0)
             {
                 if (nodeOrbit.First() == targetOrbit.First())
@@ -62,7 +62,10 @@
             var fullPath = new List<string>();
             nodeOrbit.Reverse();
             fullPath.AddRange(nodeOrbit);
-            fullPath.Add(lastParent);
+            if (lastParent != null)
+            {
+                fullPath.Add(lastParent);
+            }
             fullPath.AddRange(targetOrbit);
 
             // Transfer count is the length of the full path minus 3 (2 for nodes itself, 1 to remove the start orbit).

@@ -50,10 +50,10 @@ public class Problem8 : IProblem
 
         var n = new string[10];
 
-        //  00 
+        //  00
         // 1  2
         // 1  2
-        //  33 
+        //  33
         // 4  5
         // 4  5
         //  66
@@ -105,7 +105,7 @@ public class Problem8 : IProblem
             "1111011"
         }.Select(x => BitArrayUtils.Parse(x).ToInteger()).ToArray();
 
-    private static List<char[]> _permutations = null;
+    private static List<char[]>? _permutations = null;
 
     private static List<char[]> GetPermutations()
     {
@@ -124,14 +124,12 @@ public class Problem8 : IProblem
     /// <returns></returns>
     private static List<char[]> BuildPermutations(IEnumerable<char> current, IEnumerable<char> input)
     {
-
-
         var perms = new List<char[]>();
         if (!input.Any()) { return new List<char[]> { current.ToArray() }; }
         foreach (var c in "abcdefg")
         {
             if (current.Contains(c)) continue;
-            perms.AddRange(BuildPermutations(current.Append(c), input.Except(new[] { c })));
+            perms.AddRange(BuildPermutations(current.Append(c), input.Except([c])));
         }
         return perms;
     }

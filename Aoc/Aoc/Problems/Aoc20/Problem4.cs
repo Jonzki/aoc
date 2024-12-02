@@ -4,7 +4,7 @@ namespace Aoc.Problems.Aoc20
 {
     public class Problem4 : IProblem
     {
-        private static readonly string[] ValidEyeColors = new[] { "amb", "blu", "brn", "gry", "grn", "hzl", "oth" };
+        private static readonly string[] ValidEyeColors = ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"];
 
         public object Solve1(string input)
         {
@@ -35,12 +35,11 @@ namespace Aoc.Problems.Aoc20
             return valid;
         }
 
-
         public static Passport ParsePassport(string input)
         {
             var passport = new Passport();
 
-            var fields = input.Replace("\r", "").Replace("\n", " ").Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+            var fields = input.Replace("\r", "").Replace("\n", " ").Split([" "], StringSplitOptions.RemoveEmptyEntries);
             foreach (var field in fields)
             {
                 var parts = field.Split(':', 2);
@@ -127,16 +126,16 @@ namespace Aoc.Problems.Aoc20
 
         public record Passport
         {
-            public Dictionary<string, string> Data { get; } = new Dictionary<string, string>();
+            public Dictionary<string, string> Data { get; } = new();
 
-            public string BYR => Data.TryGetValue("byr", out var v) ? v : null;
-            public string IYR => Data.TryGetValue("iyr", out var v) ? v : null;
-            public string EYR => Data.TryGetValue("eyr", out var v) ? v : null;
-            public string HGT => Data.TryGetValue("hgt", out var v) ? v : null;
-            public string HCL => Data.TryGetValue("hcl", out var v) ? v : null;
-            public string ECL => Data.TryGetValue("ecl", out var v) ? v : null;
-            public string PID => Data.TryGetValue("pid", out var v) ? v : null;
-            public string CID => Data.TryGetValue("cid", out var v) ? v : null;
+            public string? BYR => Data.GetValueOrDefault("byr");
+            public string? IYR => Data.GetValueOrDefault("iyr");
+            public string? EYR => Data.GetValueOrDefault("eyr");
+            public string? HGT => Data.GetValueOrDefault("hgt");
+            public string? HCL => Data.GetValueOrDefault("hcl");
+            public string? ECL => Data.GetValueOrDefault("ecl");
+            public string? PID => Data.GetValueOrDefault("pid");
+            public string? CID => Data.GetValueOrDefault("cid");
         }
     }
 }

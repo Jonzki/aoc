@@ -115,8 +115,8 @@ public class Problem11 : IProblem
     private int _serial = 0;
     private int GridSerial => _serial;
 
-    private int?[,] Grid { get; set; }
-    private int?[] Grid2 { get; set; }
+    private int?[,] Grid { get; set; } = new int?[0, 0];
+    private int?[] Grid2 { get; set; } = [];
 
     private int GetCellPower(int x, int y, int gridSerial)
     {
@@ -156,7 +156,7 @@ public class Problem11 : IProblem
                     {
                         Grid2[(x + i) * 300 + (y + j)] = GetCellPower(x + i, y + j, this.GridSerial);
                     }
-                    power += Grid2[(x + i) * 300 + (y + j)].Value;
+                    power += Grid2[(x + i) * 300 + (y + j)]!.Value;
                 }
                 else
                 {
@@ -164,7 +164,7 @@ public class Problem11 : IProblem
                     {
                         Grid[x + i, y + j] = GetCellPower(x + i, y + j, this.GridSerial);
                     }
-                    power += Grid[x + i, y + j].Value;
+                    power += Grid[x + i, y + j]!.Value;
                 }
             }
         }

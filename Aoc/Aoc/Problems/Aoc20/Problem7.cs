@@ -13,10 +13,9 @@
             const string targetColor = "shiny gold";
             var validBags = new HashSet<string>();
 
-            int count = 0, loops = 0;
+            int count = 0;
             do
             {
-                ++loops;
                 count = validBags.Count;
                 foreach (var rule in bagRules)
                 {
@@ -42,17 +41,19 @@
 
             // Find all bags that can contain a "shiny gold" bag.
             const string targetColor = "shiny gold";
-            var validBags = new HashSet<string>();
 
             // Store bag counts for each bag color. -1 by default ("not calculated").
-            var childBagCounts = bagRules.SelectMany(r => r.Contents.Select(c => c.Color).Append(r.Color)).Distinct().ToDictionary(c => c, c => -1);
+            var childBagCounts = bagRules.SelectMany(r =>
+                r.Contents
+                    .Select(c => c.Color)
+                    .Append(r.Color))
+                .Distinct()
+                .ToDictionary(c => c, _ => -1);
 
             // Loop through the rules until we have made no more modifications.
             bool modified = false;
-            int loops = 0;
             do
             {
-                ++loops;
                 modified = false;
                 foreach (var rule in bagRules)
                 {
@@ -68,7 +69,7 @@
                     foreach (var c in rule.Contents)
                     {
                         // If a rule contains the target color, skip it (somewhere else in the hierarchy).
-                        if(c.Color == targetColor)
+                        if (c.Color == targetColor)
                         {
                             count = -1;
                             break;
@@ -124,9 +125,9 @@
 
         public record BagRule
         {
-            public string Color { get; set; }
+            public required string Color { get; init; }
 
-            public List<(string Color, int Quantity)> Contents { get; set; }
+            public required List<(string Color, int Quantity)> Contents { get; init; }
 
             public override string ToString()
             {

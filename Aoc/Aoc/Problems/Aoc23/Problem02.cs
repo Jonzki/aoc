@@ -54,7 +54,7 @@ public class Problem02 : IProblem
 
         public int Id { get; init; }
 
-        public List<(int Red, int Green, int Blue)> Hints { get; init; }
+        public required List<(int Red, int Green, int Blue)> Hints { get; init; }
 
         /// <summary>
         /// Checks if the game is possible for the input amount of cubes.

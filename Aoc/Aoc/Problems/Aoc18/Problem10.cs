@@ -194,7 +194,7 @@ position=<-3,  6> velocity=< 2, -1>";
             return new Input10 { Points = points };
         }
 
-        public List<Point> Points { get; init; }
+        public required List<Point> Points { get; init; }
     }
 
     public class Point

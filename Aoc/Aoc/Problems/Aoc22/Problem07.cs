@@ -57,7 +57,7 @@ public class Problem07 : IProblem
         var rootDirectory = new Directory("/", null);
 
         // Track the current directory.
-        var currentDirectory = rootDirectory;
+        Directory currentDirectory = rootDirectory;
 
         // Process each line one by one.
         foreach (var line in lines)
@@ -71,7 +71,11 @@ public class Problem07 : IProblem
                 }
                 else if (dir == "..")
                 {
-                    // Back out one step.
+                    // Back out one step (if possible).
+                    if (currentDirectory.ParentDirectory == null)
+                    {
+                        throw new InvalidOperationException("Cannot navigate upwards from root.");
+                    }
                     currentDirectory = currentDirectory.ParentDirectory;
                 }
                 else
@@ -105,9 +109,9 @@ public class Problem07 : IProblem
     }
 
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
-    class Directory
+    private class Directory
     {
-        public Directory(string name, Directory parent)
+        public Directory(string name, Directory? parent)
         {
             Name = name;
             Subdirectories = new List<Directory>();
@@ -115,13 +119,13 @@ public class Problem07 : IProblem
             ParentDirectory = parent;
         }
 
-        public string Name { get; set; }
+        public string Name { get; }
 
-        public Directory ParentDirectory { get; set; }
+        public Directory? ParentDirectory { get; }
 
-        public List<Directory> Subdirectories { get; set; }
+        public List<Directory> Subdirectories { get; }
 
-        public List<File> Files { get; set; }
+        public List<File> Files { get; }
 
         public long GetSize()
         {
@@ -162,15 +166,13 @@ public class Problem07 : IProblem
     }
 
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
-    class File
+    private class File
     {
-        public string FileName { get; set; }
-        public long Size { get; set; }
+        public required string FileName { get; init; }
+        public long Size { get; init; }
 
         private string DebuggerDisplay => ToString();
 
         public override string ToString() => $"{FileName} {Size}";
     }
-
-
 }

@@ -39,7 +39,7 @@ public class Problem10 : IProblem
         var commands = ParseCommands(input);
 
         // Set up a computer.
-        var computer = new Computer(null, commands);
+        var computer = new Computer(new(), commands);
 
         // Run the computer for 6 * 40 cycles.
         // This will print something.
@@ -51,10 +51,8 @@ public class Problem10 : IProblem
                 // Check if our X position is within 1 from the current X position.
                 var draw = Math.Abs(computer.RegisterX - (computer.Cycle % 40)) <= 1;
 
-
                 // Run a tick.
                 computer.Tick();
-
 
                 // Draw a lit or dark "pixel".
                 stringBuilder.Append(draw ? '#' : '.');
@@ -82,15 +80,15 @@ public class Problem10 : IProblem
         return commands;
     }
 
-    class Computer
+    private class Computer
     {
         public Computer(Dictionary<int, int> checkpoints, Queue<Command> commands)
         {
             Cycle = 0;
             // The CPU has a single register, X, which starts with the value 1.
             RegisterX = 1;
-            Checkpoints = checkpoints;
-            Commands = commands;
+            _checkpoints = checkpoints;
+            _commands = commands;
         }
 
         public int Cycle = 0;
@@ -100,53 +98,53 @@ public class Problem10 : IProblem
         /// <summary>
         /// Checkpoints for register X.
         /// </summary>
-        public Dictionary<int, int> Checkpoints { get; set; }
-        public Queue<Command> Commands { get; set; }
+        private readonly Dictionary<int, int> _checkpoints;
 
-        public bool HasCommands => Commands.Count > 0 || CurrentCommand != null;
+        private readonly Queue<Command> _commands;
 
-        private Command CurrentCommand;
-        private int CurrentCommandDuration = 0;
+        public bool HasCommands => _commands.Count > 0 || _currentCommand != null;
+
+        private Command? _currentCommand;
+        private int _currentCommandDuration = 0;
 
         public void Tick()
         {
             // Make sure we have a current command.
-            if (CurrentCommand == null && Commands.TryDequeue(out CurrentCommand))
+            if (_currentCommand == null && _commands.TryDequeue(out _currentCommand))
             {
                 // Reset the command duration.
-                CurrentCommandDuration = 0;
+                _currentCommandDuration = 0;
             }
             // Exit if no commands left.
-            if (CurrentCommand == null) return;
+            if (_currentCommand == null) return;
 
             // Increase the tick count.
             Cycle++;
-            CurrentCommandDuration++;
+            _currentCommandDuration++;
 
-            if (Checkpoints?.ContainsKey(Cycle) == true)
+            if (_checkpoints.ContainsKey(Cycle) == true)
             {
-                Checkpoints[Cycle] = RegisterX;
+                _checkpoints[Cycle] = RegisterX;
             }
 
-            if (CurrentCommandDuration >= CurrentCommand.Duration)
+            if (_currentCommandDuration >= _currentCommand.Duration)
             {
                 // Run the addx operation.
-                if (CurrentCommand.Identifier == "addx")
+                if (_currentCommand.Identifier == "addx")
                 {
-                    RegisterX += CurrentCommand.Value;
+                    RegisterX += _currentCommand.Value;
                 }
 
                 // Clear out the current command - next cycle will dequeue a new command.
-                CurrentCommand = null;
+                _currentCommand = null;
             }
         }
     }
 
-    class Command
+    private class Command
     {
-        public string Identifier { get; set; }
-        public int Value { get; set; }
-        public int Duration { get; set; }
+        public required string Identifier { get; init; }
+        public int Value { get; init; }
+        public int Duration { get; init; }
     }
-
 }

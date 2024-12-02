@@ -112,7 +112,7 @@ public static class ArrayUtils
     /// <returns></returns>
     public static T Get<T>(this T[,] array, Point2D point) => array[point.Y, point.X];
 
-    public static bool TryGet<T>(this T[,] array, int x, int y, out T value)
+    public static bool TryGet<T>(this T[,] array, int x, int y, out T? value)
     {
         value = default;
 

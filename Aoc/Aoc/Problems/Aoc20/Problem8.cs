@@ -140,7 +140,7 @@
 
     public record Command
     {
-        public string Code { get; set; }
+        public required string Code { get; set; }
 
         public int Argument { get; set; }
     }

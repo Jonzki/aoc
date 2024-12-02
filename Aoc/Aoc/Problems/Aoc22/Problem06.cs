@@ -2,9 +2,15 @@
 
 public class Problem06 : IProblem
 {
-    public object Solve1(string input) => FindMarker(input, 4);
+    public object Solve1(string input)
+    {
+        return FindMarker(input, 4) ?? -1;
+    }
 
-    public object Solve2(string input) => FindMarker(input, 14);
+    public object Solve2(string input)
+    {
+        return FindMarker(input, 14) ?? -1;
+    }
 
     /// <summary>
     /// Finds a marker position (first substring with distinct characters) in the input.

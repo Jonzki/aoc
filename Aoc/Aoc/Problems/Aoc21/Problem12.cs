@@ -6,7 +6,7 @@ public class Problem12 : IProblem
     {
         var map = ParseMap(input);
 
-        var paths = FindPaths(map, new[] { "start" });
+        var paths = FindPaths(map, ["start"]);
 
         return paths.Count;
     }
@@ -15,7 +15,7 @@ public class Problem12 : IProblem
     {
         var map = ParseMap(input);
 
-        var paths = FindPaths2(map, new[] { "start" });
+        var paths = FindPaths2(map, ["start"]);
 
         return paths.Count;
     }
@@ -65,7 +65,7 @@ public class Problem12 : IProblem
         return output;
     }
 
-    private List<string> FindPaths2(Dictionary<string, HashSet<string>> map, string[] visited, string revisit = null)
+    private List<string> FindPaths2(Dictionary<string, HashSet<string>> map, string[] visited, string? revisit = null)
     {
         var output = new List<string>();
 

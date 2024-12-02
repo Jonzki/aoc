@@ -5,14 +5,14 @@ public class Problem4 : IProblem
     public class BingoBoard
     {
         public int Id { get; init; }
-        public int[,] Values { get; init; }
-        public bool[,] Checks { get; init; }
+        public required int[,] Values { get; init; }
+        public required bool[,] Checks { get; init; }
         public bool HasBingo { get; private set; }
 
         public static BingoBoard Parse(string input, int index)
         {
             // Assume a 5x5 board.
-            var values = input.Split(new string[] { Environment.NewLine, " " }, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
+            var values = input.Split([Environment.NewLine, " "], StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
             var boardNumbers = ArrayUtils.To2D(values, 5, 5);
 
             var board = new BingoBoard
@@ -109,7 +109,6 @@ public class Problem4 : IProblem
                     Console.WriteLine($"Bingo on board {board.Id}!");
                     return board.CalculateScore(number);
                 }
-
             }
         }
 
@@ -141,7 +140,6 @@ public class Problem4 : IProblem
                         return board.CalculateScore(number);
                     }
                 }
-
             }
         }
 
@@ -152,13 +150,13 @@ public class Problem4 : IProblem
     public static (List<BingoBoard> Boards, List<int> Numbers) ParseInput(string input)
     {
         // Starts by splitting with double line ends.
-        var blocks = input.Split(new string[] { Environment.NewLine + Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+        var blocks = input.Split([Environment.NewLine + Environment.NewLine], StringSplitOptions.RemoveEmptyEntries);
 
         // First block is the numbers array - split with comma.
         var numbers = blocks[0].Split(',').Select(int.Parse).ToList();
 
         // Remaining blocks are bingo boards.
-        var boards = blocks.Skip(1).Select((input, index) => BingoBoard.Parse(input, index)).ToList();
+        var boards = blocks.Skip(1).Select(BingoBoard.Parse).ToList();
 
         return (boards, numbers);
     }

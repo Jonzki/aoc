@@ -60,17 +60,16 @@
         /// <param name="startIndex"></param>
         /// <param name="cache"></param>
         /// <returns></returns>
-        public static long CountArrangements(List<int> input, int startIndex = 0, Dictionary<int, long> cache = null)
+        public static long CountArrangements(List<int> input, int startIndex, Dictionary<int, long> cache)
         {
-            long cachedResult = -1;
-            if (cache?.TryGetValue(startIndex, out cachedResult) == true) return cachedResult;
+            if (cache.TryGetValue(startIndex, out var cachedResult)) return cachedResult;
 
             // Start from the given index.
             for (var i = startIndex; i < input.Count; ++i)
             {
                 if (i >= input.Count - 1)
                 {
-                    cache?.TryAdd(i, 1);
+                    cache.TryAdd(i, 1);
                     return 1; // At the end: only one possible arrangement.
                 }
 
@@ -92,13 +91,11 @@
 
                 // Recurse on the possible positions.
                 var result = possibleAdapters.Sum(index => CountArrangements(input, index, cache));
-                cache?.TryAdd(i, result);
+                cache.TryAdd(i, result);
                 return result;
             }
 
             return 1;
         }
-
-
     }
 }

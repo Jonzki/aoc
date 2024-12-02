@@ -6,7 +6,7 @@
         {
             var lines = input.SplitLines();
 
-            // The first line is your estimate of the earliest timestamp you could depart on a bus. 
+            // The first line is your estimate of the earliest timestamp you could depart on a bus.
             // Parse into a timestamp.
             var timestamp = int.Parse(lines[0]);
 
@@ -28,7 +28,7 @@
                 }
             }
 
-            // What is the ID of the earliest bus you can take to the airport 
+            // What is the ID of the earliest bus you can take to the airport
             // multiplied by the number of minutes you'll need to wait for that bus?
             return minBusId * minBusDiff;
         }
@@ -73,7 +73,6 @@
 
                 if (t == 1068781)
                 {
-
                 }
 
                 // Check for offsets.

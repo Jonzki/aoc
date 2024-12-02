@@ -37,7 +37,6 @@ public class Problem12 : IProblem
         return minDistance;
     }
 
-
     /// <summary>
     /// Parses a map of Nodes from the problem input (Dijkstra approach).
     /// </summary>
@@ -112,7 +111,6 @@ public class Problem12 : IProblem
         }
 
         // Run until we reach the target.
-        Node currentNode = null;
         var i = 0;
         do
         {
@@ -120,14 +118,10 @@ public class Problem12 : IProblem
             if (priorityMap.Count == 0) break;
 
             // Find an unvisited node with the smallest risk value. Add a large value when sorting to push visited nodes to the back.
-            var minPrio = priorityMap.First();
+            var lowestRiskNodes = priorityMap.First();
+
             // Since the risk value is the same in this pool, we should be safe to pick the last item.
-            currentNode = minPrio.Value.Last();
-            if (currentNode == null)
-            {
-                // Stop if no unvisited nodes could be found.
-                break;
-            }
+            var currentNode = lowestRiskNodes.Value.Last();
 
             // Find unvisited neighbors and calculate the risk value from start.
             var neighborPositions = FindNeighborPositions(currentNode.Position, width, height);
@@ -164,10 +158,10 @@ public class Problem12 : IProblem
             currentNode.Visited = true;
 
             // Remove the current node from the minPrio list, this should remove it from the dictionary.
-            minPrio.Value.RemoveAt(minPrio.Value.Count - 1);
-            if (minPrio.Value.Count == 0)
+            lowestRiskNodes.Value.RemoveAt(lowestRiskNodes.Value.Count - 1);
+            if (lowestRiskNodes.Value.Count == 0)
             {
-                priorityMap.Remove(minPrio.Key);
+                priorityMap.Remove(lowestRiskNodes.Key);
             }
 
             visitedNodes.Add(currentNode);
@@ -177,7 +171,7 @@ public class Problem12 : IProblem
             //    // Break out immediately when end position found.
             //    break;
             //}
-        } while (currentNode != null);
+        } while (priorityMap.Count > 0);
 
         // Search complete. We should now have the smallest risk value as the "RiskFromStart" value of the final position.
         var endNode = visitedNodes.FirstOrDefault(n => n.Value == 'E');
@@ -228,5 +222,4 @@ public class Problem12 : IProblem
 
         public bool PositionEquals(Point2D position) => Position.Equals(position);
     }
-
 }

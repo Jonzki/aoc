@@ -50,7 +50,7 @@
             /// <summary>
             /// People with the questions they answered "yes" to - each character is a question.
             /// </summary>
-            public string[] People { get; set; }
+            public required string[] People { get; init; }
         }
     }
 }

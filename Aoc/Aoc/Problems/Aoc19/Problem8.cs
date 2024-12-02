@@ -8,7 +8,7 @@
             var image = ParseImage(input, 25, 6);
 
             int minZeros = int.MaxValue;
-            int[] minLayer = null;
+            int[] minLayer = [];
 
             // "find the layer that contains the fewest 0 digits"
             foreach (var layer in image.Layers)
@@ -19,6 +19,10 @@
                     minZeros = zeros;
                     minLayer = layer;
                 }
+            }
+            if (minLayer.Length == 0)
+            {
+                throw new InvalidOperationException("Could not resolve minLayer!");
             }
 
             // "On that layer, what is the number of 1 digits multiplied by the number of 2 digits?"
@@ -124,7 +128,7 @@
 
             public int Height { get; init; }
 
-            public List<int[]> Layers { get; init; }
+            public required List<int[]> Layers { get; init; }
         }
     }
 }

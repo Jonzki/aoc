@@ -160,10 +160,10 @@ public class Problem09 : IProblem
                 var removeMarble = marble;
                 for (var i = 0; i < 7; ++i)
                 {
-                    removeMarble = removeMarble.Previous ?? marbles.Last;
+                    removeMarble = removeMarble!.Previous ?? marbles.Last;
                 }
                 // Add points from the -7 marble.
-                players[player] += removeMarble.Value;
+                players[player] += removeMarble!.Value;
                 // Next marble will be the next from the removed one.
                 marble = removeMarble.Next ?? marbles.First;
                 // Remove the marble.
@@ -175,10 +175,10 @@ public class Problem09 : IProblem
                 var temp = marble;
                 for (int i = 0; i < 1; ++i)
                 {
-                    temp = temp.Next ?? marbles.First;
+                    temp = temp!.Next ?? marbles.First;
                 }
                 //Console.WriteLine($"Inserting {val} after {temp.Value}.");
-                marble = marbles.AddAfter(temp, val);
+                marble = marbles.AddAfter(temp!, val);
             }
 
             // this.printTurn(player, marbles, index);

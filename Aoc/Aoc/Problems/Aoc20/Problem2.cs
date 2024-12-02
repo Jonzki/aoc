@@ -61,32 +61,24 @@
         /// <returns></returns>
         public static PasswordRow ParsePasswordRow(string line)
         {
-            try
+            // Split by all kinds of separators.
+            var parts = line.Split(['-', ' ', ':'], StringSplitOptions.RemoveEmptyEntries);
+            return new PasswordRow
             {
-                // Split by all kinds of separators.
-                var parts = line.Split(new[] { '-', ' ', ':' }, StringSplitOptions.RemoveEmptyEntries);
-                return new PasswordRow
-                {
-                    MinCharCount = int.Parse(parts[0]),
-                    MaxCharCount = int.Parse(parts[1]),
-                    RequiredChar = parts[2][0],
-                    Password = parts[3]
-                };
-            }
-            catch
-            {
-                return null;
-            }
+                MinCharCount = int.Parse(parts[0]),
+                MaxCharCount = int.Parse(parts[1]),
+                RequiredChar = parts[2][0],
+                Password = parts[3]
+            };
         }
 
         public class PasswordRow
         {
-            public char RequiredChar { get; set; }
-            public int MinCharCount { get; set; }
-            public int MaxCharCount { get; set; }
+            public char RequiredChar { get; init; }
+            public int MinCharCount { get; init; }
+            public int MaxCharCount { get; init; }
 
-            public string Password { get; set; }
+            public required string Password { get; init; }
         }
-
     }
 }

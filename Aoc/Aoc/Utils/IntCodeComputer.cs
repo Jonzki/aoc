@@ -58,7 +58,13 @@
         /// <returns></returns>
         public long[] GetExecutionMemory()
         {
-            var memory = new long[_executionMemory.Length];
+            // Reset if the execution memory has not been set up yet.
+            if (_executionMemory == null)
+            {
+                Reset();
+            }
+
+            var memory = new long[_executionMemory!.Length];
             _executionMemory.CopyTo(memory, 0);
             return memory;
         }
@@ -113,7 +119,7 @@
             long? output = null;
 
             // Read operation code at index.
-            var operation = _executionMemory[_operationIndex];
+            var operation = _executionMemory![_operationIndex];
             // Parse operation code and parameter modes.
             var opCode = operation % 100;
 
