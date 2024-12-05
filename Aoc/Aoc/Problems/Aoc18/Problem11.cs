@@ -39,10 +39,7 @@ public class Problem11 : IProblem
         _serial = int.Parse(input ?? ActualInput);
         Console.WriteLine($"Grid Serial: {GridSerial}");
 
-        //this.Grid = new int?[300, 300];
-        //this.Grid2 = new int?[300 * 300];
-
-        var g = new GridX(GridSerial);
+        this.Grid = new int?[300, 300];
 
         var gridSize = 300;
         //Print(gridSize, this.GridSerial);
@@ -116,7 +113,6 @@ public class Problem11 : IProblem
     private int GridSerial => _serial;
 
     private int?[,] Grid { get; set; } = new int?[0, 0];
-    private int?[] Grid2 { get; set; } = [];
 
     private int GetCellPower(int x, int y, int gridSerial)
     {
@@ -150,22 +146,11 @@ public class Problem11 : IProblem
         {
             for (int j = 0; j < s; ++j)
             {
-                if (Grid2 != null)
+                if (!Grid[x + i, y + j].HasValue)
                 {
-                    if (!Grid2[(x + i) * 300 + (y + j)].HasValue)
-                    {
-                        Grid2[(x + i) * 300 + (y + j)] = GetCellPower(x + i, y + j, this.GridSerial);
-                    }
-                    power += Grid2[(x + i) * 300 + (y + j)]!.Value;
+                    Grid[x + i, y + j] = GetCellPower(x + i, y + j, this.GridSerial);
                 }
-                else
-                {
-                    if (!Grid[x + i, y + j].HasValue)
-                    {
-                        Grid[x + i, y + j] = GetCellPower(x + i, y + j, this.GridSerial);
-                    }
-                    power += Grid[x + i, y + j]!.Value;
-                }
+                power += Grid[x + i, y + j]!.Value;
             }
         }
         return power;

@@ -16,6 +16,6 @@ public class Problem11Tests : ProblemTests<Problem11>
     public void Part2_SmallInput_Is_Correct(string correctOutput, string input)
     {
         // RunPart2(correctOutput, input);
-        Assert.Inconclusive("Part2 works but is REALLY slow (25s). Uncomment to test properly.");
+        Assert.Inconclusive("Part2 works but is slow (25s). Uncomment to test properly.");
     }
 }
