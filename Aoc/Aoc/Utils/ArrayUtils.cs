@@ -122,4 +122,17 @@ public static class ArrayUtils
         value = array[y, x];
         return true;
     }
+
+    public static int IndexOf<T>(this T[] array, T value) where T : IEquatable<T>
+    {
+        for (var i = 0; i < array.Length; ++i)
+        {
+            if (array[i].Equals(value))
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
 }
