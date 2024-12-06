@@ -112,12 +112,37 @@ public static class ArrayUtils
     /// <returns></returns>
     public static T Get<T>(this T[,] array, Point2D point) => array[point.Y, point.X];
 
+    public static T Set<T>(this T[,] array, int x, int y, T value)
+    {
+        return array[y, x] = value;
+    }
+
+    public static T Set<T>(this T[,] array, Point2D point, T value)
+    {
+        return array[point.Y, point.X] = value;
+    }
+
+    public static bool IsInBounds<T>(this T[,] array, int x, int y)
+    {
+        if (x < 0 || x >= array.Width()) return false;
+        if (y < 0 || y >= array.Height()) return false;
+
+        return true;
+    }
+
+    public static bool IsInBounds<T>(this T[,] array, Point2D point)
+    {
+        return IsInBounds(array, point.X, point.Y);
+    }
+
     public static bool TryGet<T>(this T[,] array, int x, int y, out T? value)
     {
         value = default;
 
-        if (x < 0 || x >= array.Width()) return false;
-        if (y < 0 || y >= array.Height()) return false;
+        if (!array.IsInBounds(x, y))
+        {
+            return false;
+        }
 
         value = array[y, x];
         return true;

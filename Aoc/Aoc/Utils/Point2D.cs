@@ -1,4 +1,6 @@
-﻿namespace Aoc.Utils;
+﻿using System.Runtime.CompilerServices;
+
+namespace Aoc.Utils;
 
 /// <summary>
 /// Represents a 2D point in space.
@@ -66,6 +68,38 @@ public struct Point2D
     public Point2D Down() => new(X, Y + 1);
 
     #endregion Directional builders
+
+    /// <summary>
+    /// Considering the input Point2D as a directional vector, rotates the vector 90 degrees to the right (clockwise).
+    /// </summary>
+    /// <param name="point"></param>
+    /// <returns></returns>
+    public Point2D RotateRight90()
+    {
+        // https://stackoverflow.com/a/4780141
+        // Rotating a vector 90 degrees is particularly simple.
+        // (x, y) rotated 90 degrees around (0, 0) is (-y, x).
+        //
+        // If Y points down as on computer screens, then clockwise and counterclockwise are reversed.
+        // (-y, x) is clockwise and (y, -x) is counterclockwise.
+        return new Point2D(-Y, X);
+    }
+
+    /// <summary>
+    /// Considering the input Point2D as a directional vector, rotates the vector 90 degrees to the right (counter-clockwise).
+    /// </summary>
+    /// <param name="point"></param>
+    /// <returns></returns>
+    public Point2D RotateLeft90()
+    {
+        // https://stackoverflow.com/a/4780141
+        // Rotating a vector 90 degrees is particularly simple.
+        // (x, y) rotated 90 degrees around (0, 0) is (-y, x).
+        //
+        // If Y points down as on computer screens, then clockwise and counterclockwise are reversed.
+        // (-y, x) is clockwise and (y, -x) is counterclockwise.
+        return new Point2D(Y, -X);
+    }
 
     /// <summary>
     /// Returns true if the point is in given boundaries, false otherwise.
