@@ -30,7 +30,7 @@ public class Problem08Tests : ProblemTests<Problem08>
     [TestMethod]
     public void SolvePart2()
     {
-        RunPart2(11387L, SmallInput);
+        RunPart2(34, SmallInput);
     }
 
     [TestMethod]
@@ -67,5 +67,4 @@ public class Problem08Tests : ProblemTests<Problem08>
         return pair.A == a && pair.B == b
             || pair.B == a && pair.A == b;
     }
-
 }

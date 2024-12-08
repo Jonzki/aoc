@@ -30,14 +30,70 @@ public class Problem08 : IProblem
             signalLocations.Add(posA + (posA - posB));
         }
 
-        Draw(map.Points, map.Width, map.Height, signalLocations);
+        //Draw(map.Points, map.Width, map.Height, signalLocations);
 
         return signalLocations.Count(p => p.IsInBounds(map.Width, map.Height));
     }
 
     public object Solve2(string input)
     {
-        throw new NotImplementedException();
+        var map = ParseMap(input);
+
+        // Calculate all pairs.
+        var pairs = BuildPairs(map.Points);
+
+        var pointLookup = map.Points.ToDictionary(p => p.Id);
+
+        var signalLocations = new HashSet<Point2D>();
+
+        // In part 2, we calculate a line of points in each direction
+        // (until we go out of bounds).
+        foreach (var pair in pairs)
+        {
+            var pointA = pointLookup[pair.A];
+            var pointB = pointLookup[pair.B];
+
+            var posA = pointA.Position;
+            var posB = pointB.Position;
+
+            // The two starting positions themselves can be added as is.
+            signalLocations.Add(posA);
+            signalLocations.Add(posB);
+
+            // Run in either direction.
+            // Our map dimensions works as a nice upper bound here.
+            Point2D temp = posA;
+            for (var i = 0; i < Math.Max(map.Width, map.Height); ++i)
+            {
+                temp += (posB - posA);
+                if (temp.IsInBounds(map.Width, map.Height))
+                {
+                    signalLocations.Add(temp);
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            temp = posB;
+            for (var i = 0; i < Math.Max(map.Width, map.Height); ++i)
+            {
+                temp += (posA - posB);
+                if (temp.IsInBounds(map.Width, map.Height))
+                {
+                    signalLocations.Add(temp);
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+
+        //Draw(map.Points, map.Width, map.Height, signalLocations);
+
+        return signalLocations.Count(p => p.IsInBounds(map.Width, map.Height));
     }
 
     private (int Width, int Height, List<MapPoint> Points) ParseMap(string input)
@@ -78,6 +134,13 @@ public class Problem08 : IProblem
         public Point2D Position { get; init; }
     }
 
+    /// <summary>
+    /// Draws the map for visual inspection / diagnostics.
+    /// </summary>
+    /// <param name="points"></param>
+    /// <param name="width"></param>
+    /// <param name="height"></param>
+    /// <param name="signalLocations"></param>
     private void Draw(List<MapPoint> points, int width, int height, HashSet<Point2D> signalLocations)
     {
         for (var y = 0; y < height; y++)
@@ -111,9 +174,10 @@ public class Problem08 : IProblem
     {
         var pairs = new List<(int A, int B)>();
 
-        // Process each group separately.
+        // Process each group (character) separately.
         foreach (var group in points.GroupBy(p => p.Char))
         {
+            // Build pairs within each group.
             var count = group.Count();
             var groupPoints = group.ToList();
             for (var i = 0; i < count; ++i)
@@ -131,5 +195,4 @@ public class Problem08 : IProblem
 
         return pairs;
     }
-
 }
