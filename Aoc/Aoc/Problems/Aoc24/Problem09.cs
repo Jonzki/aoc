@@ -20,8 +20,9 @@ public class Problem09 : IProblem
     public object Solve2(string input)
     {
         var disk = ParseInput(input);
-        Console.WriteLine($"Disk length at start: {disk.Length}");
+        Console.WriteLine($"Disk length at start: {disk.Length}.");
 
+        // <10 seconds for full input.
         CompressPart2(disk);
 
         var checksum = Checksum(disk);
@@ -130,6 +131,34 @@ public class Problem09 : IProblem
 
     public static void CompressPart2(int[] disk)
     {
+        // Locate the files. Reverse order by position (process last file first).
+        var files = ParseFiles(disk).OrderByDescending(f => f.Position);
+        foreach (var file in files)
+        {
+            // Try locating an empty position for the file.
+            for (var i = 0; i < file.Position; ++i)
+            {
+                // Check if we have a free block anywhere.
+                bool isFree = true;
+                for (var j = 0; j < file.Size; ++j)
+                {
+                    isFree = isFree && disk[i + j] == EmptyBlock;
+                }
+
+                if (isFree)
+                {
+                    // Write the file data to the new position, and clear the old one.
+                    for (var j = 0; j < file.Size; ++j)
+                    {
+                        disk[i + j] = disk[file.Position + j];
+                        disk[file.Position + j] = EmptyBlock;
+                    }
+
+                    // Stop processing this file.
+                    break;
+                }
+            }
+        }
     }
 
     public static long Checksum(int[] disk)
@@ -147,5 +176,79 @@ public class Problem09 : IProblem
         return output;
     }
 
+    public static List<File> ParseFiles(int[] disk)
+    {
+        // Instead of operating with blocks, form a set of Files with the starting position, length and ID.
+        var files = new List<File>();
+
+        File f = new File { Id = EmptyBlock };
+        for (int i = 0; i < disk.Length; ++i)
+        {
+            if (disk[i] != f.Id)
+            {
+                // Found a new ID.
+                // If our file was not the empty file, push to output.
+                if (f.Id != EmptyBlock)
+                {
+                    // Save file size and add to output.
+                    f.Size = i - f.Position;
+                    files.Add(f);
+                }
+
+                // Reset the file.
+                f = new File
+                {
+                    Id = disk[i],
+                    Position = i,
+                    Size = 0 // Temporary size.
+                };
+            }
+        }
+
+        // If we have a file in the buffer, remember to add it.
+        if (f.Id != EmptyBlock)
+        {
+            f.Size = disk.Length - f.Position;
+            files.Add(f);
+        }
+
+        return files;
+    }
+
+    /// <summary>
+    /// "Writes" the Files into the disk.
+    /// This completely overwrites the disk.
+    /// </summary>
+    /// <param name="disk"></param>
+    /// <param name="files"></param>
+    public static void FilesToDisk(int[] disk, List<File> files)
+    {
+        var emptyFile = new File { Id = EmptyBlock };
+
+        // Clear the disk first.
+        Array.Fill(disk, EmptyBlock);
+
+        // Write each file.
+        foreach (var file in files)
+        {
+            FileToDisk(disk, file);
+        }
+    }
+
+    public static void FileToDisk(int[] disk, File file)
+    {
+        for (var i = 0; i < file.Size; ++i)
+        {
+            disk[file.Position + i] = file.Id;
+        }
+    }
+
     private const int EmptyBlock = -1;
+
+    public struct File
+    {
+        public int Id { get; init; }
+        public int Position { get; set; }
+        public int Size { get; set; }
+    }
 }
