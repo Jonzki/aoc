@@ -148,6 +148,11 @@ public static class ArrayUtils
         return true;
     }
 
+    public static bool TryGet<T>(this T[,] array, Point2D point, out T? value)
+    {
+        return TryGet(array, point.X, point.Y, out value);
+    }
+
     public static int IndexOf<T>(this T[] array, T value) where T : IEquatable<T>
     {
         for (var i = 0; i < array.Length; ++i)
@@ -159,5 +164,32 @@ public static class ArrayUtils
         }
 
         return -1;
+    }
+
+    public static void Print<T>(T[,] array, int pad = 0)
+    {
+        var width = array.Width();
+        var height = array.Height();
+        for (var y = 0; y < height; ++y)
+        {
+            for (var x = 0; x < width; ++x)
+            {
+                Console.Write(("" + array.Get(x, y)).PadRight(pad, ' '));
+            }
+            Console.WriteLine();
+        }
+    }
+
+    public static void Iterate<T>(T[,] array, Action<Point2D, T> action)
+    {
+        var width = array.Width();
+        var height = array.Height();
+        for (var y = 0; y < height; ++y)
+        {
+            for (var x = 0; x < width; ++x)
+            {
+                action.Invoke(new Point2D(x, y), array.Get(x, y));
+            }
+        }
     }
 }

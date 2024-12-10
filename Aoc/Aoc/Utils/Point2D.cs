@@ -26,6 +26,8 @@ public struct Point2D
 
     public Point2D Clone() => new Point2D(X, Y);
 
+    public static Point2D Zero => new Point2D(0, 0);
+
     public static Point2D Parse(string input)
     {
         var parts = input.Split(',', ';');
