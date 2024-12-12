@@ -149,67 +149,8 @@ public class Problem12 : IProblem
         /// <returns></returns>
         public int Sides()
         {
-            var minX = int.MaxValue;
-            var maxX = int.MinValue;
-            var minY = int.MaxValue;
-            var maxY = int.MinValue;
-
-            // Find the bounds for possible sides.
-            foreach (var point in Points)
-            {
-                if (point.X < minX)
-                {
-                    minX = point.X;
-                }
-                if (point.X > maxX)
-                {
-                    maxX = point.X;
-                }
-
-                if (point.Y < minY)
-                {
-                    minY = point.Y;
-                }
-                if (point.Y > maxY)
-                {
-                    maxY = point.Y;
-                }
-            }
-
-            // Scan horizontal.
-            HashSet<int> sidesX = new();
-            for (var x = minX - 1; x < maxX + 1; ++x)
-            {
-                foreach (var point in Points.Where(p => p.X == x))
-                {
-                    if (!Points.Contains(point.Left()))
-                    {
-                        sidesX.Add(x);
-                    }
-                    if (!Points.Contains(point.Right()))
-                    {
-                        sidesX.Add(x);
-                    }
-                }
-            }
-            // Scan vertical
-            HashSet<int> sidesY = new();
-            for (var y = minY - 1; y < maxY + 1; ++y)
-            {
-                foreach (var point in Points.Where(p => p.Y == y))
-                {
-                    if (!Points.Contains(point.Up()))
-                    {
-                        sidesY.Add(y);
-                    }
-                    if (!Points.Contains(point.Down()))
-                    {
-                        sidesY.Add(y);
-                    }
-                }
-            }
-
-            return sidesX.Count + sidesY.Count;
+            // TODO
+            throw new NotImplementedException();
         }
 
         public int Price() => Area() * Perimeter();

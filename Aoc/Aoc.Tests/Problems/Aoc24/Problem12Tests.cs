@@ -48,7 +48,8 @@ public class Problem12Tests : ProblemTests<Problem12>
     [TestMethod]
     public void SolvePart2()
     {
-        // Nothing to test: Part 2 simply requests 75 passes instead of 25.
+        // TODO
+        Assert.Inconclusive("TODO");
     }
 
     [TestMethod]
