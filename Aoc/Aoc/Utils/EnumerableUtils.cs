@@ -10,7 +10,7 @@ public static class EnumerableUtils
     /// <param name="set"></param>
     /// <param name="values"></param>
     /// <returns>True if all values were added; false if any value collided and was not added.</returns>
-    public static bool AddRange<T>(this HashSet<T> set, params T[] values)
+    public static bool AddRange<T>(this HashSet<T> set, params IEnumerable<T> values)
     {
         var output = true;
         foreach (var value in values) output &= set.Add(value);

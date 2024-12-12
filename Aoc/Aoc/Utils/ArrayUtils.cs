@@ -180,7 +180,7 @@ public static class ArrayUtils
         }
     }
 
-    public static void Iterate<T>(T[,] array, Action<Point2D, T> action)
+    public static void Iterate<T>(this T[,] array, Action<Point2D, T> action)
     {
         var width = array.Width();
         var height = array.Height();
