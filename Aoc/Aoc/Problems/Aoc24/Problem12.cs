@@ -1,6 +1,4 @@
-﻿using System.Reflection.PortableExecutable;
-
-namespace Aoc.Problems.Aoc24;
+﻿namespace Aoc.Problems.Aoc24;
 
 public class Problem12 : IProblem
 {

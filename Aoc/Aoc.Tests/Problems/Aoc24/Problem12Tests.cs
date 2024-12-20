@@ -48,8 +48,9 @@ public class Problem12Tests : ProblemTests<Problem12>
     [TestMethod]
     public void SolvePart2()
     {
-        // TODO
-        Assert.Inconclusive("TODO");
+        RunPart2(80, SmallInput1);
+
+        RunPart2(436, SmallInput2);
     }
 
     [TestMethod]
