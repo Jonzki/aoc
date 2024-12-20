@@ -43,6 +43,18 @@ public class Problem15Tests : ProblemTests<Problem15>
                                       v^^>>><<^^<>>^v^<v^vv<>v^<<>^<^v^v><^<<<><<^<v><v<>vv>>v><v^<vv<>v^<<^
                                       """;
 
+    public const string SmallInput3 = """
+                                      #######
+                                      #...#.#
+                                      #.....#
+                                      #..OO@#
+                                      #..O..#
+                                      #.....#
+                                      #######
+
+                                      <vv<<^^<<^^
+                                      """;
+
     [TestMethod]
     public void SolvePart1()
     {
@@ -54,8 +66,9 @@ public class Problem15Tests : ProblemTests<Problem15>
     [TestMethod]
     public void SolvePart2()
     {
-        // In part 2 we are visually searching for a christmas tree.
-        // No real testing here to do.
+        // 105 + 207 + 306
+        RunPart2(618, SmallInput3);
+
         RunPart2(9021, SmallInput2);
     }
 

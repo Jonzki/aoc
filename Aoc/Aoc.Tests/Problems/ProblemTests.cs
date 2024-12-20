@@ -26,7 +26,9 @@ public abstract class ProblemTests<TProblem> where TProblem : IProblem, new()
         // If the assertion and output types are both int or long, compare both as long.
         if (output is int or long && correctOutput is int or long)
         {
-            output.As<long>().Should().Be(correctOutput.As<long>());
+            var outLong = long.Parse(output.ToString()!);
+            var correctLong = long.Parse(correctOutput.ToString()!);
+            outLong.Should().Be(correctLong);
             return;
         }
 
@@ -54,7 +56,9 @@ public abstract class ProblemTests<TProblem> where TProblem : IProblem, new()
         // If the assertion and output types are both int or long, compare both as long.
         if (output is int or long && correctOutput is int or long)
         {
-            output.As<long>().Should().Be(correctOutput.As<long>());
+            var outLong = long.Parse(output.ToString()!);
+            var correctLong = long.Parse(correctOutput.ToString()!);
+            outLong.Should().Be(correctLong);
             return;
         }
 

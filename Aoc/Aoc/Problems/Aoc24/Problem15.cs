@@ -28,43 +28,83 @@ public class Problem15 : IProblem
 
     public object Solve2(string input)
     {
-        return 0;
+        var (map, commands) = ParseInput(input, wide: true);
+
+        map.Draw("Initial state:");
+
+        for (var i = 0; i < commands.Count; ++i)
+        {
+            map.Move(commands[i]);
+
+            if (i < 15)
+            {
+                map.Draw($"Move {commands[i]}:");
+            }
+        }
+
+        map.Draw("Final state:");
+
+        // For the result, calculate the sum of GPS coordinate of each box.
+        var result = map.Boxes.Sum(boxPosition => 100 * boxPosition.Y + boxPosition.X);
+
+        return result;
     }
 
-    public static (Map Map, List<char> Moves) ParseInput(string input)
+    public static (Map Map, List<char> Moves) ParseInput(string input, bool wide = false)
     {
         // Separate map and moves.
         var parts = input.Split(Environment.NewLine + Environment.NewLine);
 
-        return (ParseMap(parts[0]), parts[1].Replace(Environment.NewLine, "").ToList());
+        return (ParseMap(parts[0], wide), parts[1].Replace(Environment.NewLine, "").ToList());
     }
 
-    public static Map ParseMap(string input)
+    public static Map ParseMap(string input, bool wide = false)
     {
         var lines = input.SplitLines();
 
         var height = lines.Length;
         var width = lines[0].Length;
 
-        var map = new Map { Width = width, Height = height, };
+        var map = new Map { Width = (wide ? 2 : 1) * width, Height = height, IsWide = wide };
 
         for (var y = 0; y < height; ++y)
         {
             for (var x = 0; x < width; ++x)
             {
-                switch (lines[y][x])
+                if (wide)
                 {
-                    case '#':
-                        map.Walls.Add((x, y));
-                        break;
+                    switch (lines[y][x])
+                    {
+                        case '#':
+                            map.Walls.Add((2 * x, y));
+                            map.Walls.Add((2 * x + 1, y));
+                            break;
 
-                    case 'O':
-                        map.Boxes.Add((x, y));
-                        break;
+                        case 'O':
+                            map.Boxes.Add((2 * x, y));
+                            break;
 
-                    case '@':
-                        map.Robot = (x, y);
-                        break;
+                        case '@':
+                            map.Robot = (2 * x, y);
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (lines[y][x])
+                    {
+                        case '#':
+                            map.Walls.Add((x, y));
+                            break;
+
+                        case 'O':
+                            map.Boxes.Add((x, y));
+                            break;
+
+                        case '@':
+                            map.Robot = (x, y);
+                            break;
+                    }
                 }
             }
         }
@@ -74,6 +114,8 @@ public class Problem15 : IProblem
 
     public class Map
     {
+        public bool IsWide { get; init; }
+
         public int Width { get; init; }
         public int Height { get; init; }
 
@@ -85,6 +127,12 @@ public class Problem15 : IProblem
 
         public void Move(char dir)
         {
+            if (IsWide)
+            {
+                MoveWide(dir);
+                return;
+            }
+
             var target = dir switch
             {
                 '^' => Robot.Up(),
@@ -141,6 +189,219 @@ public class Problem15 : IProblem
             }
         }
 
+        private void MoveWide(char dir)
+        {
+            // 4 directions special handling.
+            if (dir == '<')
+            {
+                // Left. Check if direct left has a wall.
+                if (Walls.Contains(Robot.Left()))
+                {
+                    return;
+                }
+
+                // If double left contains a Box, try move it.
+                if (Boxes.Contains(Robot.Left().Left()))
+                {
+                    MoveBoxWide(Robot.Left().Left(), '<');
+                }
+
+                // If there is not a box next to us now, we are free to move.
+                if (Boxes.Contains(Robot.Left().Left()))
+                {
+                    return;
+                }
+
+                Robot = Robot.Left();
+            }
+            else if (dir == '>')
+            {
+                // Right. Check for walls again.
+                if (Walls.Contains(Robot.Right()))
+                {
+                    return;
+                }
+
+                // If right side contains a Box, try move it.
+                // Left edge coordinates.
+                if (Boxes.Contains(Robot.Right()))
+                {
+                    MoveBoxWide(Robot.Right(), '>');
+                }
+
+                // Re-check for obstacles (box stuck).
+                if (Boxes.Contains(Robot.Right()))
+                {
+                    return;
+                }
+
+                Robot = Robot.Right();
+            }
+            else if (dir == '^')
+            {
+                // Check if the spot above has a wall.
+                if (Walls.Contains(Robot.Up()))
+                {
+                    return;
+                }
+
+                // Check for boxes either directly above or offset one to the left.
+                // Try move either up.
+                if (Boxes.Contains(Robot.Up()))
+                {
+                    MoveBoxWide(Robot.Up(), '^');
+                }
+                if (Boxes.Contains(Robot.Up()))
+                {
+                    return;
+                }
+
+                if (Boxes.Contains(Robot.Up().Left()))
+                {
+                    MoveBoxWide(Robot.Up().Left(), '^');
+                }
+                if (Boxes.Contains(Robot.Up().Left()))
+                {
+                    return;
+                }
+
+                Robot = Robot.Up();
+            }
+            else if (dir == 'v')
+            {
+                // Check if the spot below has a wall.
+                if (Walls.Contains(Robot.Down()))
+                {
+                    return;
+                }
+
+                // Check for boxes either directly below or offset one to the left.
+                // Try move either down.
+                if (Boxes.Contains(Robot.Down()))
+                {
+                    MoveBoxWide(Robot.Down(), 'v');
+                }
+                if (Boxes.Contains(Robot.Down()))
+                {
+                    return;
+                }
+
+                if (Boxes.Contains(Robot.Down().Left()))
+                {
+                    MoveBoxWide(Robot.Down().Left(), 'v');
+                }
+                if (Boxes.Contains(Robot.Down().Left()))
+                {
+                    return;
+                }
+
+                Robot = Robot.Down();
+            }
+        }
+
+        private void MoveBoxWide(Point2D position, char dir)
+        {
+            // 4 directions special handling.
+            if (dir == '<')
+            {
+                // Check if there is a free spot to the left. May be blocked by a wall:
+                if (Walls.Contains(position.Left()))
+                {
+                    return;
+                }
+
+                // Or by a box:
+                if (Boxes.Contains(position.Left().Left()))
+                {
+                    MoveBoxWide(position.Left().Left(), '<');
+                }
+                if (Boxes.Contains(position.Left().Left()))
+                {
+                    return;
+                }
+
+                // Should be free now.
+                Boxes.Add(position.Left());
+                Boxes.Remove(position);
+            }
+            else if (dir == '>')
+            {
+                // Check if there is a free spot to the double right. May be blocked by a wall:
+                if (Walls.Contains(position.Right().Right()))
+                {
+                    return;
+                }
+
+                // Or by a box:
+                if (Boxes.Contains(position.Right().Right()))
+                {
+                    MoveBoxWide(position.Right().Right(), '>');
+                }
+                if (Boxes.Contains(position.Right().Right()))
+                {
+                    return;
+                }
+
+                // Should be free now.
+                Boxes.Add(position.Right());
+                Boxes.Remove(position);
+            }
+            else if (dir == '^')
+            {
+                // Moving up might be blocked by two walls.
+                if (Walls.Contains(position.Up()) || Walls.Contains(position.Up().Right()))
+                {
+                    return;
+                }
+
+                // There may also be a box in 3 possible locations.
+                // Move any boxes found.
+                Point2D[] boxPositions = [position.Up().Left(), position.Up(), position.Up().Right()];
+                foreach (var b in boxPositions)
+                {
+                    if (Boxes.Contains(b))
+                    {
+                        MoveBoxWide(b, '^');
+                    }
+                    if (Boxes.Contains(b))
+                    {
+                        return;
+                    }
+                }
+
+                // Should be clear to move now.
+                Boxes.Add(position.Up());
+                Boxes.Remove(position);
+            }
+            else if (dir == 'v')
+            {
+                // Moving down might be blocked by two walls.
+                if (Walls.Contains(position.Down()) || Walls.Contains(position.Down().Right()))
+                {
+                    return;
+                }
+
+                // There may also be a box in 3 possible locations.
+                // Move any boxes found.
+                Point2D[] boxPositions = [position.Down().Left(), position.Down(), position.Down().Right()];
+                foreach (var b in boxPositions)
+                {
+                    if (Boxes.Contains(b))
+                    {
+                        MoveBoxWide(b, 'v');
+                    }
+                    if (Boxes.Contains(b))
+                    {
+                        return;
+                    }
+                }
+
+                // Should be clear to move now.
+                Boxes.Add(position.Down());
+                Boxes.Remove(position);
+            }
+        }
+
         /// <summary>
         /// Draws the map on the console.
         /// </summary>
@@ -159,9 +420,17 @@ public class Problem15 : IProblem
                     {
                         Console.Write('@');
                     }
-                    else if (Boxes.Contains((x, y)))
+                    else if (!IsWide && Boxes.Contains((x, y)))
                     {
                         Console.Write('O');
+                    }
+                    else if (IsWide && Boxes.Contains((x, y)))
+                    {
+                        Console.Write('[');
+                    }
+                    else if (IsWide && Boxes.Contains((x - 1, y)))
+                    {
+                        Console.Write(']');
                     }
                     else if (Walls.Contains((x, y)))
                     {
