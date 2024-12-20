@@ -23,7 +23,7 @@ public class Problem13 : IProblem
         Console.WriteLine($"{machines.Count} machines.");
 
         var results = machines
-            .Select(m => m.Play2(Part2PrizeModifier, int.MaxValue))
+            .Select(m => m.Play2(Part2PrizeModifier))
             .ToArray();
 
         return results
@@ -133,7 +133,7 @@ public class Problem13 : IProblem
         /// Plays the machine for a win.
         /// </summary>
         /// <returns>Boolean indicating whether the machine can be won, and the lowest token cost of doing so.</returns>
-        public (bool PossibleToWin, long TokenCost) Play2(long prizeModifier = 0, int moveLimit = 100)
+        public (bool PossibleToWin, long TokenCost) Play2(long prizeModifier = 0)
         {
             // Very naive approach: just try all options towards the move limit.
             var xP = Prize.X + prizeModifier;

@@ -43,6 +43,8 @@ public struct Point2D
 
     public static Point2D operator -(Point2D a, Point2D b) => new Point2D(a.X - b.X, a.Y - b.Y);
 
+    public static Point2D operator *(Point2D a, int multiplier) => new Point2D(a.X * multiplier, a.Y * multiplier);
+
     #region Directional builders
 
     /// <summary>
@@ -90,7 +92,6 @@ public struct Point2D
     /// <summary>
     /// Considering the input Point2D as a directional vector, rotates the vector 90 degrees to the right (counter-clockwise).
     /// </summary>
-    /// <param name="point"></param>
     /// <returns></returns>
     public Point2D RotateLeft90()
     {

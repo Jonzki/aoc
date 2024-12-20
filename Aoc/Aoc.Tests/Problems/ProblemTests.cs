@@ -9,15 +9,19 @@ namespace Aoc.Tests.Problems;
 [TestClass]
 public abstract class ProblemTests<TProblem> where TProblem : IProblem, new()
 {
-    protected void RunPart1(object correctOutput, string input)
-        => RunPart1(correctOutput.GetType(), correctOutput, input);
+    protected void RunPart1(object correctOutput, string input, Action<TProblem>? beforeTest = null)
+        => RunPart1(correctOutput.GetType(), correctOutput, input, beforeTest);
 
-    protected void RunPart1<TOut>(TOut correctOutput, string input)
-        => RunPart1(typeof(TOut), correctOutput, input);
+    protected void RunPart1<TOut>(TOut correctOutput, string input, Action<TProblem>? beforeTest = null)
+        => RunPart1(typeof(TOut), correctOutput, input, beforeTest);
 
-    private void RunPart1(Type correctOutputType, object correctOutput, string input)
+    private void RunPart1(Type correctOutputType, object? correctOutput, string input, Action<TProblem>? beforeTest = null)
     {
-        var output = new TProblem().Solve1(input);
+        var problem = new TProblem();
+
+        beforeTest?.Invoke(problem);
+
+        var output = problem.Solve1(input);
 
         // If the assertion and output types are both int or long, compare both as long.
         if (output is int or long && correctOutput is int or long)
@@ -33,15 +37,19 @@ public abstract class ProblemTests<TProblem> where TProblem : IProblem, new()
         output.Should().Be(correctOutput);
     }
 
-    protected void RunPart2(object correctOutput, string input)
-        => RunPart2(correctOutput.GetType(), correctOutput, input);
+    protected void RunPart2(object correctOutput, string input, Action<TProblem>? beforeTest = null)
+        => RunPart2(correctOutput.GetType(), correctOutput, input, beforeTest);
 
-    protected void RunPart2<TOut>(TOut correctOutput, string input)
-        => RunPart2(typeof(TOut), correctOutput, input);
+    protected void RunPart2<TOut>(TOut correctOutput, string input, Action<TProblem>? beforeTest = null)
+        => RunPart2(typeof(TOut), correctOutput, input, beforeTest);
 
-    private void RunPart2(Type correctOutputType, object correctOutput, string input)
+    private void RunPart2(Type correctOutputType, object? correctOutput, string input, Action<TProblem>? beforeTest = null)
     {
-        var output = new TProblem().Solve2(input);
+        var problem = new TProblem();
+
+        beforeTest?.Invoke(problem);
+
+        var output = problem.Solve2(input);
 
         // If the assertion and output types are both int or long, compare both as long.
         if (output is int or long && correctOutput is int or long)
