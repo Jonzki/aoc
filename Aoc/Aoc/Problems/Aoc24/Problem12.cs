@@ -17,7 +17,13 @@ public class Problem12 : IProblem
 
     public object Solve2(string input)
     {
-        throw new NotImplementedException();
+        var map = ParseMap(input);
+
+        var regions = ParseRegions(map);
+
+        var totalPrice = regions.Sum(r => r.Price2());
+
+        return totalPrice;
     }
 
     public static char[,] ParseMap(string input)
@@ -149,8 +155,60 @@ public class Problem12 : IProblem
         /// <returns></returns>
         public int Sides()
         {
-            // TODO
-            throw new NotImplementedException();
+            // The amount of Sides is equal to the amount of corners in the shape.
+            // Corners should be easier to calculate.
+            // We will look for points with 1 or 2 empty neighbors.
+            // This would be a problem for 1-wide areas, so first scale the shape up by 2.
+
+            var scaledPoints = new HashSet<Point2D>();
+            foreach (var point in Points)
+            {
+                // Scale by 2.
+                var s = new Point2D(2 * point.X, 2 * point.Y);
+                scaledPoints.Add(s);
+
+                // Generate a 2x2 point set from each scaled point:
+                scaledPoints.Add(s.Down());
+                scaledPoints.Add(s.Right());
+                scaledPoints.Add(s.Right().Down());
+            }
+
+            // From this new area we can calculate the amount of corners.
+            var corners = 0;
+            foreach (var point in scaledPoints)
+            {
+                var emptyNeighbors =
+                    new[] { point.Left(), point.Right(), point.Up(), point.Down() }
+                        .Except(scaledPoints)
+                        .ToArray();
+
+                // Outer corner: two empty spots around, which are not on the same line.
+                if (emptyNeighbors.Length == 2)
+                {
+                    if (emptyNeighbors[0].X != emptyNeighbors[1].X && emptyNeighbors[0].Y != emptyNeighbors[1].Y)
+                    {
+                        ++corners;
+                    }
+                }
+
+                // Inner corner: zero empty spots around, but exactly one in diagonals.
+                if (emptyNeighbors.Length == 0)
+                {
+                    var emptyDiagonals = new[]
+                    {
+                        point.Left().Up(), //
+                        point.Left().Down(),
+                        point.Right().Up(),
+                        point.Right().Down(),
+                    }.Count(p => !scaledPoints.Contains(p));
+                    if (emptyDiagonals == 1)
+                    {
+                        ++corners;
+                    }
+                }
+            }
+
+            return corners;
         }
 
         public int Price() => Area() * Perimeter();

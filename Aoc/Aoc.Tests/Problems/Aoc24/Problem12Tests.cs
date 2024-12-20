@@ -160,6 +160,57 @@ public class Problem12Tests : ProblemTests<Problem12>
     }
 
     [TestMethod]
+    public void Sides_WorksWithOuterCorners()
+    {
+        // Shape: AA should have 4 sides.
+        var regionA = new Problem12.Region
+        {
+            Character = 'A',
+            Points =
+            {
+                new(0, 0),
+                new(1, 0)
+            }
+        };
+        regionA.Sides().Should().Be(4);
+
+        // This shape should also have 4 sides:
+        // BB
+        // BB
+        var regionB = new Problem12.Region
+        {
+            Character = 'B',
+            Points =
+            {
+                new(0, 0),
+                new(1, 0),
+                new(0, 1),
+                new(1, 1)
+            }
+        };
+        regionB.Sides().Should().Be(4);
+    }
+
+    [TestMethod]
+    public void Sides_WorksWithInnerCorners()
+    {
+        // This shape should also have 4 sides:
+        // BB
+        //  B
+        var regionB = new Problem12.Region
+        {
+            Character = 'B',
+            Points =
+            {
+                new(0, 0),
+                new(1, 0),
+                new(1, 1)
+            }
+        };
+        regionB.Sides().Should().Be(6);
+    }
+
+    [TestMethod]
     public void Sides_Works()
     {
         var regionA = new Problem12.Region
