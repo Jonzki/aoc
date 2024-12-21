@@ -2,6 +2,8 @@
 
 public class Problem15 : IProblem
 {
+    public bool DrawSteps = false;
+
     public object Solve1(string input)
     {
         var (map, commands) = ParseInput(input);
@@ -12,7 +14,7 @@ public class Problem15 : IProblem
         {
             map.Move(commands[i]);
 
-            if (i < 15)
+            if (DrawSteps && i < 15)
             {
                 map.Draw($"Move {commands[i]}:");
             }
@@ -36,7 +38,7 @@ public class Problem15 : IProblem
         {
             map.Move(commands[i]);
 
-            if (i < 15)
+            if (DrawSteps && i < 15)
             {
                 map.Draw($"Move {commands[i]}:");
             }
@@ -299,26 +301,24 @@ public class Problem15 : IProblem
             }
         }
 
-        private void MoveBoxWide(Point2D position, char dir)
+        private bool MoveBoxWide(Point2D position, char dir)
         {
+            // Can't move a nonexistent box.
+            if (!Boxes.Contains(position))
+            {
+                return false;
+            }
+
+            if (!CanMoveBoxWide(position, dir))
+            {
+                return false;
+            }
+
             // 4 directions special handling.
             if (dir == '<')
             {
-                // Check if there is a free spot to the left. May be blocked by a wall:
-                if (Walls.Contains(position.Left()))
-                {
-                    return;
-                }
-
-                // Or by a box:
-                if (Boxes.Contains(position.Left().Left()))
-                {
-                    MoveBoxWide(position.Left().Left(), '<');
-                }
-                if (Boxes.Contains(position.Left().Left()))
-                {
-                    return;
-                }
+                // Any boxes to our left should be movable now.
+                MoveBoxWide(position.Left().Left(), '<');
 
                 // Should be free now.
                 Boxes.Add(position.Left());
@@ -326,21 +326,7 @@ public class Problem15 : IProblem
             }
             else if (dir == '>')
             {
-                // Check if there is a free spot to the double right. May be blocked by a wall:
-                if (Walls.Contains(position.Right().Right()))
-                {
-                    return;
-                }
-
-                // Or by a box:
-                if (Boxes.Contains(position.Right().Right()))
-                {
-                    MoveBoxWide(position.Right().Right(), '>');
-                }
-                if (Boxes.Contains(position.Right().Right()))
-                {
-                    return;
-                }
+                MoveBoxWide(position.Right().Right(), '>');
 
                 // Should be free now.
                 Boxes.Add(position.Right());
@@ -348,25 +334,12 @@ public class Problem15 : IProblem
             }
             else if (dir == '^')
             {
-                // Moving up might be blocked by two walls.
-                if (Walls.Contains(position.Up()) || Walls.Contains(position.Up().Right()))
-                {
-                    return;
-                }
-
                 // There may also be a box in 3 possible locations.
                 // Move any boxes found.
                 Point2D[] boxPositions = [position.Up().Left(), position.Up(), position.Up().Right()];
                 foreach (var b in boxPositions)
                 {
-                    if (Boxes.Contains(b))
-                    {
-                        MoveBoxWide(b, '^');
-                    }
-                    if (Boxes.Contains(b))
-                    {
-                        return;
-                    }
+                    MoveBoxWide(b, '^');
                 }
 
                 // Should be clear to move now.
@@ -375,10 +348,93 @@ public class Problem15 : IProblem
             }
             else if (dir == 'v')
             {
+                // There may also be a box in 3 possible locations.
+                // Move any boxes found.
+                Point2D[] boxPositions = [position.Down().Left(), position.Down(), position.Down().Right()];
+                foreach (var b in boxPositions)
+                {
+                    MoveBoxWide(b, 'v');
+                }
+
+                // Should be clear to move now.
+                Boxes.Add(position.Down());
+                Boxes.Remove(position);
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Checks if box movement is allowed.
+        /// </summary>
+        /// <param name="position"></param>
+        /// <param name="dir"></param>
+        /// <returns></returns>
+        private bool CanMoveBoxWide(Point2D position, char dir)
+        {
+            // Can't move a nonexistent box.
+            if (!Boxes.Contains(position))
+            {
+                return false;
+            }
+
+            // 4 directions special handling.
+            if (dir == '<')
+            {
+                // Check if there is a free spot to the left. May be blocked by a wall:
+                if (Walls.Contains(position.Left()))
+                {
+                    return false;
+                }
+                // Or by a box:
+                if (Boxes.Contains(position.Left().Left()))
+                {
+                    return CanMoveBoxWide(position.Left().Left(), '<');
+                }
+                // Otherwise free to move.
+                return true;
+            }
+            if (dir == '>')
+            {
+                // Check if there is a free spot to the double right. May be blocked by a wall:
+                if (Walls.Contains(position.Right().Right()))
+                {
+                    return false;
+                }
+                // Or by a box:
+                if (Boxes.Contains(position.Right().Right()))
+                {
+                    return CanMoveBoxWide(position.Right().Right(), '>');
+                }
+
+                return true;
+            }
+            if (dir == '^')
+            {
+                // Moving up might be blocked by two walls.
+                if (Walls.Contains(position.Up()) || Walls.Contains(position.Up().Right()))
+                {
+                    return false;
+                }
+
+                // There may also be a box in 3 possible locations.
+                // Move any boxes found.
+                Point2D[] boxPositions = [position.Up().Left(), position.Up(), position.Up().Right()];
+                foreach (var b in boxPositions)
+                {
+                    if (Boxes.Contains(b) && !CanMoveBoxWide(b, '^'))
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            if (dir == 'v')
+            {
                 // Moving down might be blocked by two walls.
                 if (Walls.Contains(position.Down()) || Walls.Contains(position.Down().Right()))
                 {
-                    return;
+                    return false;
                 }
 
                 // There may also be a box in 3 possible locations.
@@ -386,20 +442,16 @@ public class Problem15 : IProblem
                 Point2D[] boxPositions = [position.Down().Left(), position.Down(), position.Down().Right()];
                 foreach (var b in boxPositions)
                 {
-                    if (Boxes.Contains(b))
+                    if (Boxes.Contains(b) && !CanMoveBoxWide(b, 'v'))
                     {
-                        MoveBoxWide(b, 'v');
-                    }
-                    if (Boxes.Contains(b))
-                    {
-                        return;
+                        return false;
                     }
                 }
 
-                // Should be clear to move now.
-                Boxes.Add(position.Down());
-                Boxes.Remove(position);
+                return true;
             }
+
+            throw new ArgumentOutOfRangeException(nameof(dir), $"Unsupported direction '{dir}'.");
         }
 
         /// <summary>
@@ -438,7 +490,7 @@ public class Problem15 : IProblem
                     }
                     else
                     {
-                        Console.Write(' ');
+                        Console.Write('.');
                     }
                 }
 
