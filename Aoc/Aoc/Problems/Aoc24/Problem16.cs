@@ -1,7 +1,27 @@
-﻿namespace Aoc.Problems.Aoc24;
+﻿using Spectre.Console;
+
+namespace Aoc.Problems.Aoc24;
 
 public class Problem16 : IProblem
 {
+    private const string SmallInput1 = """
+                                     ###############
+                                     #.......#....E#
+                                     #.#.###.#.###.#
+                                     #.....#.#...#.#
+                                     #.###.#####.#.#
+                                     #.#.#.......#.#
+                                     #.#.#####.###.#
+                                     #...........#.#
+                                     ###.#.#####.#.#
+                                     #...#.....#.#.#
+                                     #.#.#.###.#.#.#
+                                     #.....#...#.#.#
+                                     #.###.#.#.#.#.#
+                                     #S..#.....#...#
+                                     ###############
+                                     """;
+
     public object Solve1(string input)
     {
         var map = ParseMap(input);
@@ -10,7 +30,11 @@ public class Problem16 : IProblem
 
         map.Scores.Add(map.StartPoint.ToString(), 0);
 
-        var paths = ResolvePaths(map, true);
+        var paths = ResolvePaths(map, false);
+
+        var v = paths.First().CalculateVisited(map);
+        map.Draw([.. v]);
+        //Console.WriteLine(paths.FirstOrDefault()?.Score() ?? -1);
 
         return map.Scores.GetValueOrDefault(map.EndPoint.ToString(), 0);
     }
@@ -31,6 +55,7 @@ public class Problem16 : IProblem
         var score = map.Scores.GetValueOrDefault(map.EndPoint.ToString(), 0);
 
         var paths = ResolvePaths(map, false, score);
+        Console.WriteLine($"{paths.Count} best paths");
 
         var visited = new HashSet<Point2D>();
         foreach (var path in paths)
@@ -102,35 +127,38 @@ public class Problem16 : IProblem
 
         public void Draw(HashSet<Point2D>? visitedPoints = null)
         {
+            AnsiConsole.WriteLine("Map:");
+
+            var canvas = new Canvas(Width, Height);
+
             for (var y = 0; y < Height; ++y)
             {
                 for (var x = 0; x < Width; ++x)
                 {
                     if (visitedPoints != null && visitedPoints.Contains(new Point2D(x, y)))
                     {
-                        Console.Write('O');
+                        canvas.SetPixel(x, y, Color.Green);
                     }
                     else if (StartPoint.PositionEquals(x, y))
                     {
-                        Console.Write('S');
+                        canvas.SetPixel(x, y, Color.Green1);
                     }
                     else if (EndPoint.PositionEquals(x, y))
                     {
-                        Console.Write('E');
+                        canvas.SetPixel(x, y, Color.Green3);
                     }
                     else if (Positions.Contains((x, y)))
                     {
-                        Console.Write('.');
+                        canvas.SetPixel(x, y, Color.Black);
                     }
                     else
                     {
-                        Console.Write('#');
+                        canvas.SetPixel(x, y, Color.Red);
                     }
                 }
-
-                Console.WriteLine();
             }
 
+            AnsiConsole.Write(canvas);
             Console.WriteLine();
         }
     }

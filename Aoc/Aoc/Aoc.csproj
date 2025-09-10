@@ -28,5 +28,9 @@
   <ItemGroup>
     <EditorConfigFiles Remove="C:\Users\saarjo\source\repos\aoc\Aoc\Aoc\.editorconfig" />
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Spectre.Console.Cli" Version="0.50.0" />
+  </ItemGroup>
   
 </Project>
