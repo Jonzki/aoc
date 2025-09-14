@@ -109,7 +109,7 @@ public class Problem16Tests : ProblemTests<Problem16>
     {
         RunPart2(45, SmallInput1);
 
-        //RunPart2(64, SmallInput2);
+        RunPart2(64, SmallInput2);
     }
 
     [TestMethod]
@@ -140,10 +140,7 @@ public class Problem16Tests : ProblemTests<Problem16>
         var paths = Problem16.ResolvePaths(map, false, 5010);
 
         paths.Should().HaveCount(1);
-
-        var visited = paths.First().CalculateVisited(map);
-
-        visited.Should().HaveCount(11);
+        paths.First().VisitedPoints.Should().HaveCount(11);
     }
 
     [TestMethod]
@@ -159,7 +156,7 @@ public class Problem16Tests : ProblemTests<Problem16>
         var visited = new HashSet<Point2D>();
         foreach (var path in paths)
         {
-            visited.AddRange(path.CalculateVisited(map));
+            visited.AddRange(path.VisitedPoints);
         }
 
         // All map points should have been visited.
