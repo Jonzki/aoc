@@ -1,141 +1,140 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace Aoc.Problems.Aoc20
+namespace Aoc.Problems.Aoc20;
+
+public class Problem4 : IProblem
 {
-    public class Problem4 : IProblem
+    private static readonly string[] ValidEyeColors = ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"];
+
+    public object Solve1(string input)
     {
-        private static readonly string[] ValidEyeColors = ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"];
+        var passports = input.Split(Environment.NewLine + Environment.NewLine).Select(ParsePassport).ToArray();
 
-        public object Solve1(string input)
+        var valid = 0;
+        foreach (var passport in passports)
         {
-            var passports = input.Split(Environment.NewLine + Environment.NewLine).Select(ParsePassport).ToArray();
+            if (IsPasswordValid1(passport)) ++valid;
+        }
 
-            var valid = 0;
-            foreach (var passport in passports)
+        return valid;
+    }
+
+    public object Solve2(string input)
+    {
+        var passports = input.Split(Environment.NewLine + Environment.NewLine).Select(ParsePassport).ToArray();
+
+        var valid = 0;
+        foreach (var passport in passports)
+        {
+            if (IsPasswordValid2(passport))
             {
-                if (IsPasswordValid1(passport)) ++valid;
+                ++valid;
             }
-
-            return valid;
         }
 
-        public object Solve2(string input)
-        {
-            var passports = input.Split(Environment.NewLine + Environment.NewLine).Select(ParsePassport).ToArray();
+        return valid;
+    }
 
-            var valid = 0;
-            foreach (var passport in passports)
+    public static Passport ParsePassport(string input)
+    {
+        var passport = new Passport();
+
+        var fields = input.Replace("\r", "").Replace("\n", " ").Split([" "], StringSplitOptions.RemoveEmptyEntries);
+        foreach (var field in fields)
+        {
+            var parts = field.Split(':', 2);
+            passport.Data.AddOrUpdate(parts[0].Trim(), parts[1].Trim());
+        }
+
+        return passport;
+    }
+
+    public static bool IsPasswordValid1(Passport passport)
+    {
+        // 7 or 8 members of data need to be present.
+        if (passport.Data.Count != 7 && passport.Data.Count != 8) return false;
+
+        // If 7 members, cid should not be there (optional).
+        // This means some required member is missing.
+        if (passport.Data.Count == 7 && passport.Data.ContainsKey("cid")) return false;
+
+        return true;
+    }
+
+    public static bool IsPasswordValid2(Passport passport)
+    {
+        // Use step 1 to validate the members being present.
+        if (!IsPasswordValid1(passport)) return false;
+
+        foreach (var kvp in passport.Data)
+        {
+            if (!ValidateField(kvp.Key, kvp.Value)) return false;
+        }
+        return true;
+    }
+
+    public static bool ValidateField(string field, string value)
+    {
+        long number;
+        if (!long.TryParse(value, out number)) number = -1;
+
+        bool ValidateHeight()
+        {
+            int temp = -1;
+            if (value.EndsWith("cm") && int.TryParse(value.Substring(0, value.Length - 2), out temp))
             {
-                if (IsPasswordValid2(passport))
-                {
-                    ++valid;
-                }
+                // If cm, the number must be at least 150 and at most 193.
+                return temp.BetweenInclusive(150, 193);
             }
-
-            return valid;
-        }
-
-        public static Passport ParsePassport(string input)
-        {
-            var passport = new Passport();
-
-            var fields = input.Replace("\r", "").Replace("\n", " ").Split([" "], StringSplitOptions.RemoveEmptyEntries);
-            foreach (var field in fields)
+            if (value.EndsWith("in") && int.TryParse(value.Substring(0, value.Length - 2), out temp))
             {
-                var parts = field.Split(':', 2);
-                passport.Data.AddOrUpdate(parts[0].Trim(), parts[1].Trim());
+                // If in, the number must be at least 59 and at most 76.
+                return temp.BetweenInclusive(59, 76);
             }
-
-            return passport;
+            return false;
         }
 
-        public static bool IsPasswordValid1(Passport passport)
+        return field switch
         {
-            // 7 or 8 members of data need to be present.
-            if (passport.Data.Count != 7 && passport.Data.Count != 8) return false;
+            // byr(Birth Year) - four digits; at least 1920 and at most 2002.
+            "byr" => number.BetweenInclusive(1920, 2002),
 
-            // If 7 members, cid should not be there (optional).
-            // This means some required member is missing.
-            if (passport.Data.Count == 7 && passport.Data.ContainsKey("cid")) return false;
+            // iyr(Issue Year) - four digits; at least 2010 and at most 2020.
+            "iyr" => number.BetweenInclusive(2010, 2020),
 
-            return true;
-        }
+            // eyr(Expiration Year) - four digits; at least 2020 and at most 2030.
+            "eyr" => number.BetweenInclusive(2020, 2030),
 
-        public static bool IsPasswordValid2(Passport passport)
-        {
-            // Use step 1 to validate the members being present.
-            if (!IsPasswordValid1(passport)) return false;
+            // hgt(Height) - a number followed by either cm or in:
+            "hgt" => ValidateHeight(),
 
-            foreach (var kvp in passport.Data)
-            {
-                if (!ValidateField(kvp.Key, kvp.Value)) return false;
-            }
-            return true;
-        }
+            // hcl(Hair Color) - a # followed by exactly six characters 0-9 or a-f.
+            "hcl" => Regex.IsMatch(value, @"^#[0-9a-f]{6}$"),
 
-        public static bool ValidateField(string field, string value)
-        {
-            long number;
-            if (!long.TryParse(value, out number)) number = -1;
+            // ecl(Eye Color) - exactly one of: amb blu brn gry grn hzl oth.
+            "ecl" => ValidEyeColors.Contains(value),
 
-            bool ValidateHeight()
-            {
-                int temp = -1;
-                if (value.EndsWith("cm") && int.TryParse(value.Substring(0, value.Length - 2), out temp))
-                {
-                    // If cm, the number must be at least 150 and at most 193.
-                    return temp.BetweenInclusive(150, 193);
-                }
-                if (value.EndsWith("in") && int.TryParse(value.Substring(0, value.Length - 2), out temp))
-                {
-                    // If in, the number must be at least 59 and at most 76.
-                    return temp.BetweenInclusive(59, 76);
-                }
-                return false;
-            }
+            // pid(Passport ID) - a nine-digit number, including leading zeroes.
+            "pid" => Regex.IsMatch(value, "^[0-9]{9}$"),
 
-            return field switch
-            {
-                // byr(Birth Year) - four digits; at least 1920 and at most 2002.
-                "byr" => number.BetweenInclusive(1920, 2002),
+            // cid(Country ID) - ignored, missing or not.
+            "cid" => true,
 
-                // iyr(Issue Year) - four digits; at least 2010 and at most 2020.
-                "iyr" => number.BetweenInclusive(2010, 2020),
+            _ => throw new InvalidOperationException($"Unexpected field '{field}'.")
+        };
+    }
 
-                // eyr(Expiration Year) - four digits; at least 2020 and at most 2030.
-                "eyr" => number.BetweenInclusive(2020, 2030),
+    public record Passport
+    {
+        public Dictionary<string, string> Data { get; } = new();
 
-                // hgt(Height) - a number followed by either cm or in:
-                "hgt" => ValidateHeight(),
-
-                // hcl(Hair Color) - a # followed by exactly six characters 0-9 or a-f.
-                "hcl" => Regex.IsMatch(value, @"^#[0-9a-f]{6}$"),
-
-                // ecl(Eye Color) - exactly one of: amb blu brn gry grn hzl oth.
-                "ecl" => ValidEyeColors.Contains(value),
-
-                // pid(Passport ID) - a nine-digit number, including leading zeroes.
-                "pid" => Regex.IsMatch(value, "^[0-9]{9}$"),
-
-                // cid(Country ID) - ignored, missing or not.
-                "cid" => true,
-
-                _ => throw new InvalidOperationException($"Unexpected field '{field}'.")
-            };
-        }
-
-        public record Passport
-        {
-            public Dictionary<string, string> Data { get; } = new();
-
-            public string? BYR => Data.GetValueOrDefault("byr");
-            public string? IYR => Data.GetValueOrDefault("iyr");
-            public string? EYR => Data.GetValueOrDefault("eyr");
-            public string? HGT => Data.GetValueOrDefault("hgt");
-            public string? HCL => Data.GetValueOrDefault("hcl");
-            public string? ECL => Data.GetValueOrDefault("ecl");
-            public string? PID => Data.GetValueOrDefault("pid");
-            public string? CID => Data.GetValueOrDefault("cid");
-        }
+        public string? BYR => Data.GetValueOrDefault("byr");
+        public string? IYR => Data.GetValueOrDefault("iyr");
+        public string? EYR => Data.GetValueOrDefault("eyr");
+        public string? HGT => Data.GetValueOrDefault("hgt");
+        public string? HCL => Data.GetValueOrDefault("hcl");
+        public string? ECL => Data.GetValueOrDefault("ecl");
+        public string? PID => Data.GetValueOrDefault("pid");
+        public string? CID => Data.GetValueOrDefault("cid");
     }
 }

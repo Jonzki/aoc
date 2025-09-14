@@ -1,6 +1,4 @@
-﻿using System.Xml;
-
-namespace Aoc.Problems.Aoc24;
+﻿namespace Aoc.Problems.Aoc24;
 
 public class Problem14 : IProblem
 {

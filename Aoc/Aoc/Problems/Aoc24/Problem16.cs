@@ -1,6 +1,4 @@
-﻿using Spectre.Console;
-
-namespace Aoc.Problems.Aoc24;
+﻿namespace Aoc.Problems.Aoc24;
 
 public class Problem16 : IProblem
 {

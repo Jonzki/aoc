@@ -1,155 +1,154 @@
-﻿namespace Aoc.Problems.Aoc20
+﻿namespace Aoc.Problems.Aoc20;
+
+public class Problem7 : IProblem
 {
-    public class Problem7 : IProblem
+    public object Solve1(string input)
     {
-        public object Solve1(string input)
+        // Read the bag rules.
+        var bagRules = input
+            .Split(Environment.NewLine).Select(ParseBagRule)
+            .ToArray();
+
+        // Find all bags that can contain a "shiny gold" bag.
+        const string targetColor = "shiny gold";
+        var validBags = new HashSet<string>();
+
+        int count = 0;
+        do
         {
-            // Read the bag rules.
-            var bagRules = input
-                .Split(Environment.NewLine).Select(ParseBagRule)
-                .ToArray();
-
-            // Find all bags that can contain a "shiny gold" bag.
-            const string targetColor = "shiny gold";
-            var validBags = new HashSet<string>();
-
-            int count = 0;
-            do
+            count = validBags.Count;
+            foreach (var rule in bagRules)
             {
-                count = validBags.Count;
-                foreach (var rule in bagRules)
+                // Find a bag that either has the target color directly or contains a bag that we know contains the target.
+                var bagColor = rule.Contents.FirstOrDefault(x => x.Color == targetColor || validBags.Contains(x.Color)).Color;
+                if (bagColor != null)
                 {
-                    // Find a bag that either has the target color directly or contains a bag that we know contains the target.
-                    var bagColor = rule.Contents.FirstOrDefault(x => x.Color == targetColor || validBags.Contains(x.Color)).Color;
-                    if (bagColor != null)
-                    {
-                        validBags.Add(rule.Color);
-                    }
+                    validBags.Add(rule.Color);
                 }
-            } while (count != validBags.Count); // Stop when there's no more changes.
+            }
+        } while (count != validBags.Count); // Stop when there's no more changes.
 
-            // How many bag colors can eventually contain at least one shiny gold bag?
-            return validBags.Count;
-        }
+        // How many bag colors can eventually contain at least one shiny gold bag?
+        return validBags.Count;
+    }
 
-        public object Solve2(string input)
-        {
-            // Read the bag rules.
-            var bagRules = input
-                .Split(Environment.NewLine).Select(ParseBagRule)
-                .ToArray();
+    public object Solve2(string input)
+    {
+        // Read the bag rules.
+        var bagRules = input
+            .Split(Environment.NewLine).Select(ParseBagRule)
+            .ToArray();
 
-            // Find all bags that can contain a "shiny gold" bag.
-            const string targetColor = "shiny gold";
+        // Find all bags that can contain a "shiny gold" bag.
+        const string targetColor = "shiny gold";
 
-            // Store bag counts for each bag color. -1 by default ("not calculated").
-            var childBagCounts = bagRules.SelectMany(r =>
+        // Store bag counts for each bag color. -1 by default ("not calculated").
+        var childBagCounts = bagRules.SelectMany(r =>
                 r.Contents
                     .Select(c => c.Color)
                     .Append(r.Color))
-                .Distinct()
-                .ToDictionary(c => c, _ => -1);
+            .Distinct()
+            .ToDictionary(c => c, _ => -1);
 
-            // Loop through the rules until we have made no more modifications.
-            bool modified = false;
-            do
+        // Loop through the rules until we have made no more modifications.
+        bool modified = false;
+        do
+        {
+            modified = false;
+            foreach (var rule in bagRules)
             {
-                modified = false;
-                foreach (var rule in bagRules)
+                var color = rule.Color;
+
+                var childBagCount = childBagCounts[color];
+
+                // If child bag count is not -1, we've already calculated this color.
+                if (childBagCount != -1) continue;
+
+                // Attempt to calculate the child bag count.
+                var count = 0;
+                foreach (var c in rule.Contents)
                 {
-                    var color = rule.Color;
-
-                    var childBagCount = childBagCounts[color];
-
-                    // If child bag count is not -1, we've already calculated this color.
-                    if (childBagCount != -1) continue;
-
-                    // Attempt to calculate the child bag count.
-                    var count = 0;
-                    foreach (var c in rule.Contents)
+                    // If a rule contains the target color, skip it (somewhere else in the hierarchy).
+                    if (c.Color == targetColor)
                     {
-                        // If a rule contains the target color, skip it (somewhere else in the hierarchy).
-                        if (c.Color == targetColor)
-                        {
-                            count = -1;
-                            break;
-                        }
-
-                        var childCount = childBagCounts[c.Color];
-                        if (childCount == -1)
-                        {
-                            // Some child has not been calculated yet - skip on this loop.
-                            count = -1;
-                            break;
-                        }
-                        // Add to the count.
-                        count += c.Quantity * (1 + childCount);
+                        count = -1;
+                        break;
                     }
 
-                    if (count != -1)
+                    var childCount = childBagCounts[c.Color];
+                    if (childCount == -1)
                     {
-                        childBagCounts[color] = count;
-                        modified = true;
+                        // Some child has not been calculated yet - skip on this loop.
+                        count = -1;
+                        break;
                     }
+                    // Add to the count.
+                    count += c.Quantity * (1 + childCount);
                 }
-            } while (modified); // Stop when there's no more changes.
 
-            // Find the child bag count for the shiny gold bag.
-            var targetCount = childBagCounts[targetColor];
-            return targetCount;
+                if (count != -1)
+                {
+                    childBagCounts[color] = count;
+                    modified = true;
+                }
+            }
+        } while (modified); // Stop when there's no more changes.
+
+        // Find the child bag count for the shiny gold bag.
+        var targetCount = childBagCounts[targetColor];
+        return targetCount;
+    }
+
+    public static BagRule ParseBagRule(string input)
+    {
+        var parts = input.Replace(".", "").Replace("bags", "").Replace("bag", "").Split("contain");
+
+        var rule = new BagRule
+        {
+            Color = parts[0].Trim(),
+            Contents = new List<(string Color, int Quantity)>()
+        };
+
+        // Handle "no other bags". Remember, we've removed the "bags" word earlier.
+        if (parts[1].Trim() == "no other") return rule;
+
+        foreach (var contentPart in parts[1].Split(','))
+        {
+            var temp = contentPart.Trim().Split(' ', 2);
+            var quantity = int.Parse(temp[0]);
+            var color = temp[1].Trim();
+            rule.Contents.Add((color, quantity));
         }
 
-        public static BagRule ParseBagRule(string input)
+        return rule;
+    }
+
+    public record BagRule
+    {
+        public required string Color { get; init; }
+
+        public required List<(string Color, int Quantity)> Contents { get; init; }
+
+        public override string ToString()
         {
-            var parts = input.Replace(".", "").Replace("bags", "").Replace("bag", "").Split("contain");
+            var sb = new StringBuilder();
+            sb.Append(Color);
+            sb.Append(" bags contain ");
 
-            var rule = new BagRule
+            if (Contents.Count == 0)
             {
-                Color = parts[0].Trim(),
-                Contents = new List<(string Color, int Quantity)>()
-            };
-
-            // Handle "no other bags". Remember, we've removed the "bags" word earlier.
-            if (parts[1].Trim() == "no other") return rule;
-
-            foreach (var contentPart in parts[1].Split(','))
+                sb.Append("no other bags");
+            }
+            else
             {
-                var temp = contentPart.Trim().Split(' ', 2);
-                var quantity = int.Parse(temp[0]);
-                var color = temp[1].Trim();
-                rule.Contents.Add((color, quantity));
+                sb.Append(string.Join(", ", Contents.Select(bag =>
+                    $"{bag.Quantity} {bag.Color} bag" + (bag.Quantity > 1 ? "s" : "")
+                )));
             }
 
-            return rule;
-        }
+            sb.Append(".");
 
-        public record BagRule
-        {
-            public required string Color { get; init; }
-
-            public required List<(string Color, int Quantity)> Contents { get; init; }
-
-            public override string ToString()
-            {
-                var sb = new StringBuilder();
-                sb.Append(Color);
-                sb.Append(" bags contain ");
-
-                if (Contents.Count == 0)
-                {
-                    sb.Append("no other bags");
-                }
-                else
-                {
-                    sb.Append(string.Join(", ", Contents.Select(bag =>
-                        $"{bag.Quantity} {bag.Color} bag" + (bag.Quantity > 1 ? "s" : "")
-                    )));
-                }
-
-                sb.Append(".");
-
-                return sb.ToString();
-            }
+            return sb.ToString();
         }
     }
 }

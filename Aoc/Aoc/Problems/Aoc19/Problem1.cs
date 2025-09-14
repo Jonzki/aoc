@@ -1,49 +1,48 @@
-﻿namespace Aoc.Problems.Aoc19
+﻿namespace Aoc.Problems.Aoc19;
+
+public class Problem1 : IProblem
 {
-    public class Problem1 : IProblem
+    public object Solve1(string input)
     {
-        public object Solve1(string input)
-        {
-            var masses = input.Split(Environment.NewLine).Select(long.Parse);
-            return masses.Sum(CalculateFuel1);
-        }
+        var masses = input.Split(Environment.NewLine).Select(long.Parse);
+        return masses.Sum(CalculateFuel1);
+    }
 
-        public object Solve2(string input)
-        {
-            var masses = input.Split(Environment.NewLine).Select(long.Parse);
-            return masses.Sum(CalculateFuel2);
-        }
+    public object Solve2(string input)
+    {
+        var masses = input.Split(Environment.NewLine).Select(long.Parse);
+        return masses.Sum(CalculateFuel2);
+    }
 
-        public static long CalculateFuel1(long mass)
-        {
-            return mass / 3 - 2;
-        }
+    public static long CalculateFuel1(long mass)
+    {
+        return mass / 3 - 2;
+    }
 
-        public static long CalculateFuel2(long mass)
+    public static long CalculateFuel2(long mass)
+    {
+        var totalFuel = 0L;
+        var currentMass = mass;
+        long i = 0;
+        long limit = 1_000_000;
+        for (; i < limit; ++i)
         {
-            var totalFuel = 0L;
-            var currentMass = mass;
-            long i = 0;
-            long limit = 1_000_000;
-            for (; i < limit; ++i)
+            var fuel = CalculateFuel1(currentMass);
+            if (fuel > 0)
             {
-                var fuel = CalculateFuel1(currentMass);
-                if (fuel > 0)
-                {
-                    totalFuel += fuel;
-                    currentMass = fuel;
-                }
-                else
-                {
-                    break;
-                }
+                totalFuel += fuel;
+                currentMass = fuel;
             }
-            if (i >= limit)
+            else
             {
-                Console.WriteLine("ERROR: Loop reached limit.");
-                return -1;
+                break;
             }
-            return totalFuel;
         }
+        if (i >= limit)
+        {
+            Console.WriteLine("ERROR: Loop reached limit.");
+            return -1;
+        }
+        return totalFuel;
     }
 }

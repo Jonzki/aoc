@@ -1,101 +1,100 @@
-﻿namespace Aoc.Problems.Aoc20
+﻿namespace Aoc.Problems.Aoc20;
+
+public class Problem10 : IProblem
 {
-    public class Problem10 : IProblem
+    public object Solve1(string input)
     {
-        public object Solve1(string input)
+        // Parse adapters.
+        var adapters = (input)
+            .SplitLines()
+            .Select(int.Parse)
+            // Part 1 seems to just work by ordering the array.
+            .OrderBy(x => x)
+            .ToList();
+
+        // Treat the charging outlet near your seat as having an effective joltage rating of 0.
+        adapters.Insert(0, 0);
+
+        // Your device has a built-in joltage adapter rated for 3 jolts higher than the highest-rated adapter in your bag.
+        adapters.Add(adapters.Last() + 3);
+
+        // What is the number of 1-jolt differences multiplied by the number of 3-jolt differences?
+        int diff1 = 0, diff3 = 0;
+        for (int i = 0; i < adapters.Count - 1; ++i)
         {
-            // Parse adapters.
-            var adapters = (input)
-                .SplitLines()
-                .Select(int.Parse)
-                // Part 1 seems to just work by ordering the array.
-                .OrderBy(x => x)
-                .ToList();
+            if (adapters[i + 1] - adapters[i] == 3) ++diff3;
+            if (adapters[i + 1] - adapters[i] == 1) ++diff1;
+        }
 
-            // Treat the charging outlet near your seat as having an effective joltage rating of 0.
-            adapters.Insert(0, 0);
+        return diff1 * diff3;
+    }
 
-            // Your device has a built-in joltage adapter rated for 3 jolts higher than the highest-rated adapter in your bag.
-            adapters.Add(adapters.Last() + 3);
+    public object Solve2(string input)
+    {
+        // Start with the conditions of part 1.
+        // Parse adapters.
+        var adapters = (input)
+            .SplitLines()
+            .Select(int.Parse)
+            // Part 1 seems to just work by ordering the array.
+            .OrderBy(x => x)
+            .ToList();
 
-            // What is the number of 1-jolt differences multiplied by the number of 3-jolt differences?
-            int diff1 = 0, diff3 = 0;
-            for (int i = 0; i < adapters.Count - 1; ++i)
+        // Treat the charging outlet near your seat as having an effective joltage rating of 0.
+        adapters.Insert(0, 0);
+
+        // Your device has a built-in joltage adapter rated for 3 jolts higher than the highest-rated adapter in your bag.
+        adapters.Add(adapters.Last() + 3);
+
+        // Index -> count cache.
+        var cache = new Dictionary<int, long>();
+
+        // Return the amount of possible adapters.
+        return CountArrangements(adapters, 0, cache);
+    }
+
+    /// <summary>
+    /// Counts the possible arrangements of the input adapters from the given starting index.
+    /// </summary>
+    /// <param name="input"></param>
+    /// <param name="startIndex"></param>
+    /// <param name="cache"></param>
+    /// <returns></returns>
+    public static long CountArrangements(List<int> input, int startIndex, Dictionary<int, long> cache)
+    {
+        if (cache.TryGetValue(startIndex, out var cachedResult)) return cachedResult;
+
+        // Start from the given index.
+        for (var i = startIndex; i < input.Count; ++i)
+        {
+            if (i >= input.Count - 1)
             {
-                if (adapters[i + 1] - adapters[i] == 3) ++diff3;
-                if (adapters[i + 1] - adapters[i] == 1) ++diff1;
+                cache.TryAdd(i, 1);
+                return 1; // At the end: only one possible arrangement.
             }
 
-            return diff1 * diff3;
-        }
+            var possibleAdapters = new List<int>();
 
-        public object Solve2(string input)
-        {
-            // Start with the conditions of part 1.
-            // Parse adapters.
-            var adapters = (input)
-                .SplitLines()
-                .Select(int.Parse)
-                // Part 1 seems to just work by ordering the array.
-                .OrderBy(x => x)
-                .ToList();
-
-            // Treat the charging outlet near your seat as having an effective joltage rating of 0.
-            adapters.Insert(0, 0);
-
-            // Your device has a built-in joltage adapter rated for 3 jolts higher than the highest-rated adapter in your bag.
-            adapters.Add(adapters.Last() + 3);
-
-            // Index -> count cache.
-            var cache = new Dictionary<int, long>();
-
-            // Return the amount of possible adapters.
-            return CountArrangements(adapters, 0, cache);
-        }
-
-        /// <summary>
-        /// Counts the possible arrangements of the input adapters from the given starting index.
-        /// </summary>
-        /// <param name="input"></param>
-        /// <param name="startIndex"></param>
-        /// <param name="cache"></param>
-        /// <returns></returns>
-        public static long CountArrangements(List<int> input, int startIndex, Dictionary<int, long> cache)
-        {
-            if (cache.TryGetValue(startIndex, out var cachedResult)) return cachedResult;
-
-            // Start from the given index.
-            for (var i = startIndex; i < input.Count; ++i)
+            for (var j = i + 1; j < input.Count; ++j)
             {
-                if (i >= input.Count - 1)
-                {
-                    cache.TryAdd(i, 1);
-                    return 1; // At the end: only one possible arrangement.
-                }
+                if (j >= input.Count) break;
 
-                var possibleAdapters = new List<int>();
+                // Check if we're over 3 "Jolt" difference.
+                if (input[j] - input[i] > 3) break;
 
-                for (var j = i + 1; j < input.Count; ++j)
-                {
-                    if (j >= input.Count) break;
-
-                    // Check if we're over 3 "Jolt" difference.
-                    if (input[j] - input[i] > 3) break;
-
-                    // Otherwise, add the adapter index to the list of possibilities.
-                    possibleAdapters.Add(j);
-                }
-
-                // Exactly 1 possible adapter - continue the loop.
-                if (possibleAdapters.Count == 1) continue;
-
-                // Recurse on the possible positions.
-                var result = possibleAdapters.Sum(index => CountArrangements(input, index, cache));
-                cache.TryAdd(i, result);
-                return result;
+                // Otherwise, add the adapter index to the list of possibilities.
+                possibleAdapters.Add(j);
             }
 
-            return 1;
+            // Exactly 1 possible adapter - continue the loop.
+            if (possibleAdapters.Count == 1) continue;
+
+            // Recurse on the possible positions.
+            var result = possibleAdapters.Sum(index => CountArrangements(input, index, cache));
+            cache.TryAdd(i, result);
+            return result;
         }
+
+        return 1;
     }
 }

@@ -1,26 +1,25 @@
-﻿namespace Aoc.Problems.Aoc19
+﻿namespace Aoc.Problems.Aoc19;
+
+public class Problem5 : IProblem
 {
-    public class Problem5 : IProblem
+    public object Solve1(string input)
     {
-        public object Solve1(string input)
-        {
-            var array = input.Split(',').Select(long.Parse).ToArray();
+        var array = input.Split(',').Select(long.Parse).ToArray();
 
-            return Process(array, 1);
-        }
+        return Process(array, 1);
+    }
 
-        public object Solve2(string input)
-        {
-            var array = input.Split(',').Select(long.Parse).ToArray();
+    public object Solve2(string input)
+    {
+        var array = input.Split(',').Select(long.Parse).ToArray();
 
-            return Process(array, 5);
-        }
+        return Process(array, 5);
+    }
 
-        private object Process(long[] array, params long[] input)
-        {
-            var program = new Utils.IntCodeComputer(array);
-            var result = program.Execute(input);
-            return result;
-        }
+    private object Process(long[] array, params long[] input)
+    {
+        var program = new Utils.IntCodeComputer(array);
+        var result = program.Execute(input);
+        return result;
     }
 }
