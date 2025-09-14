@@ -24,9 +24,9 @@ public struct Point2D
         Y = (int)point.Item2;
     }
 
-    public Point2D Clone() => new Point2D(X, Y);
+    public Point2D Clone() => new(X, Y);
 
-    public static Point2D Zero => new Point2D(0, 0);
+    public static Point2D Zero { get; } = new(0, 0);
 
     public static Point2D Parse(string input)
     {
@@ -45,31 +45,43 @@ public struct Point2D
 
     public static Point2D operator *(Point2D a, int multiplier) => new Point2D(a.X * multiplier, a.Y * multiplier);
 
+    #region Unit Vectors 
+
+    public static Point2D UnitRight { get; } = new(1, 0);
+
+    public static Point2D UnitLeft { get; } = new(-1, 0);
+
+    public static Point2D UnitUp { get; } = new(0, -1);
+
+    public static Point2D UnitDown { get; } = new(0, 1);
+
+    #endregion Unit Vectors
+
     #region Directional builders
 
     /// <summary>
     /// Returns a point one step "left" of the current point.
     /// </summary>
     /// <returns></returns>
-    public Point2D Left() => new(X - 1, Y);
+    public Point2D Left() => this + UnitLeft;
 
     /// <summary>
     /// Returns a point one step "right" of the current point.
     /// </summary>
     /// <returns></returns>
-    public Point2D Right() => new(X + 1, Y);
+    public Point2D Right() => this + UnitRight;
 
     /// <summary>
     /// Returns a point one step "up" of the current point.
     /// </summary>
     /// <returns></returns>
-    public Point2D Up() => new(X, Y - 1);
+    public Point2D Up() => this + UnitUp;
 
     /// <summary>
     /// Returns a point one step "down" of the current point.
     /// </summary>
     /// <returns></returns>
-    public Point2D Down() => new(X, Y + 1);
+    public Point2D Down() => this + UnitDown;
 
     #endregion Directional builders
 
