@@ -64,19 +64,19 @@ public class Problem14Tests : ProblemTests<Problem14>
         robot.Position.Should().Be(new Point2D(4, 1));
 
         // After 2 seconds:
-        robot.Simulate(1, w, h);
+        robot.Simulate(2, w, h);
         robot.Position.Should().Be(new Point2D(6, 5));
 
         // After 3 seconds:
-        robot.Simulate(1, w, h);
+        robot.Simulate(3, w, h);
         robot.Position.Should().Be(new Point2D(8, 2));
 
         // After 4 seconds:
-        robot.Simulate(1, w, h);
+        robot.Simulate(4, w, h);
         robot.Position.Should().Be(new Point2D(10, 6));
 
         // After 5 seconds:
-        robot.Simulate(1, w, h);
+        robot.Simulate(5, w, h);
         robot.Position.Should().Be(new Point2D(1, 3));
     }
 }
