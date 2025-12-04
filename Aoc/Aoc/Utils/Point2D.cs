@@ -43,7 +43,7 @@ public struct Point2D
 
     public static Point2D operator *(Point2D a, int multiplier) => new Point2D(a.X * multiplier, a.Y * multiplier);
 
-    #region Unit Vectors 
+    #region Unit Vectors
 
     public static Point2D UnitRight { get; } = new(1, 0);
 
@@ -84,6 +84,33 @@ public struct Point2D
     #endregion Directional builders
 
     /// <summary>
+    /// Returns the Points surrounding the input Point, optionally including diagonals.
+    /// </summary>
+    /// <param name="includeDiagonals"></param>
+    /// <returns></returns>
+    public Point2D[] GetSurroundingPoints(bool includeDiagonals = false)
+    {
+        var points = new Point2D[includeDiagonals ? 8 : 4];
+
+        // Add the cardinal positions first.
+        points[0] = this.Left();
+        points[1] = this.Right();
+        points[2] = this.Up();
+        points[3] = this.Down();
+
+        // Include diagonals if needed.
+        if (includeDiagonals)
+        {
+            points[4] = this.Left().Up();
+            points[5] = this.Left().Down();
+            points[6] = this.Right().Up();
+            points[7] = this.Right().Down();
+        }
+
+        return points;
+    }
+
+    /// <summary>
     /// Considering the input Point2D as a directional vector, rotates the vector 90 degrees to the right (clockwise).
     /// </summary>
     /// <param name="point"></param>
@@ -115,7 +142,7 @@ public struct Point2D
     }
 
     /// <summary>
-    /// Returns true if the point is in given boundaries, false otherwise.
+    /// Returns true if the point is in given boundaries (0..Width, 0..Height), false otherwise.
     /// </summary>
     /// <param name="width"></param>
     /// <param name="height"></param>
