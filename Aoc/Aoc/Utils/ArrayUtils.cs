@@ -10,7 +10,7 @@ public static class ArrayUtils
     /// <param name="width"></param>
     /// <param name="height"></param>
     /// <returns></returns>
-    public static T[,] To2D<T>(T[] input, int width, int height)
+    public static T[,] To2D<T>(this T[] input, int width, int height)
     {
         if (input.Length != width * height) throw new ArgumentException($"Input array of {input.Length} items cannot be converted to a {width}*{height} matrix.");
 
@@ -31,9 +31,9 @@ public static class ArrayUtils
     /// Converts a two-dimensional matrix into an array.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <param name="array"></param>
+    /// <param name="input"></param>
     /// <returns></returns>
-    public static T[] To1D<T>(T[,] input)
+    public static T[] To1D<T>(this T[,] input)
     {
         var output = new T[input.Length];
 
