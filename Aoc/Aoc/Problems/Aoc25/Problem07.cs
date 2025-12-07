@@ -1,6 +1,4 @@
-﻿using Microsoft.VisualBasic;
-
-namespace Aoc.Problems.Aoc25;
+﻿namespace Aoc.Problems.Aoc25;
 
 public class Problem07 : IProblem
 {
