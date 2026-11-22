@@ -1,0 +1,8 @@
+namespace Aoc.Problems.Aoc00;
+
+public class Problem99 : IProblem
+{
+    public object Solve1(string input) => throw new NotImplementedException();
+
+    public object Solve2(string input) => throw new NotImplementedException();
+}

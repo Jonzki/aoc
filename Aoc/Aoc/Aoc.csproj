@@ -24,17 +24,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="C:\Users\saarjo\source\repos\aoc\Aoc\Aoc\.editorconfig" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="Inputs\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EditorConfigFiles Remove="C:\Users\saarjo\source\repos\aoc\Aoc\Aoc\.editorconfig" />
   </ItemGroup>
 
   <ItemGroup>

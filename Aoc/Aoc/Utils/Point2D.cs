@@ -5,7 +5,7 @@
 /// This is useful in many problems where we operate on a 2D map.
 /// </summary>
 [DebuggerDisplay("{DebuggerDisplay,nq}")]
-public struct Point2D
+public struct Point2D : IEquatable<Point2D>
 {
     public int X;
     public int Y;

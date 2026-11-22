@@ -1,0 +1,19 @@
+using Aoc.Problems.Aoc00;
+
+namespace Aoc.Tests.Problems.Aoc00;
+
+[TestClass]
+public class Problem99Tests : ProblemTests<Problem99>
+{
+    private const string SmallInput = "";
+
+    private object CorrectOutput1 => -1;
+
+    private object CorrectOutput2 => -1;
+
+    [TestMethod]
+    public void Part1_SmallInput_Is_Correct() => RunPart1(CorrectOutput1, SmallInput);
+
+    [TestMethod]
+    public void Part2_SmallInput_Is_Correct() => RunPart2(CorrectOutput2, SmallInput);
+}
